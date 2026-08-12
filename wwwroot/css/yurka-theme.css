@@ -1,0 +1,467 @@
+﻿@font-face {
+    font-family: "PUBG Sans";
+    src: url("/yurka/assets/fonts/PUBG-Sans.ttf") format("truetype");
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+:root {
+    --primary: #ffd60a;
+    --primary-light: #ffe885;
+    --accent: #00b4db;
+    --accent-light: #38ceed;
+    --success: #16a34a;
+    --danger: #e8137c;
+    --warning: #ff6b47;
+    --dark: #0a2540;
+    --dark-2: #16385c;
+    --text: #0a2540;
+    --text-muted: #6b83a0;
+    --border: #dce4ed;
+    --bg: #f2f3f5;
+    --white: #ffffff;
+    --card-shadow: 0 14px 34px rgba(10, 37, 64, 0.10);
+    --card-shadow-hover: 0 24px 54px rgba(10, 37, 64, 0.18);
+    --radius: 22px;
+    --radius-sm: 14px;
+    --font: "Cairo", "Tajawal", system-ui, sans-serif;
+    --display: "PUBG Sans", "Cairo", sans-serif;
+}
+
+body {
+    background:
+        radial-gradient(circle at 8% 12%, rgba(255, 46, 147, 0.10), transparent 24rem),
+        radial-gradient(circle at 92% 18%, rgba(0, 180, 219, 0.13), transparent 22rem),
+        var(--bg);
+}
+
+.navbar {
+    background: rgba(10, 37, 64, 0.94);
+    border-bottom: 0;
+}
+
+.navbar.scrolled {
+    box-shadow: 0 10px 30px rgba(10, 37, 64, 0.18);
+}
+
+.brand-icon {
+    background: var(--primary);
+    color: var(--dark);
+    box-shadow: 0 5px 0 #c99e00;
+}
+
+.brand-main,
+.nav-link,
+.btn-nav-outline {
+    color: #fff;
+}
+
+.brand-sub {
+    color: rgba(255, 255, 255, 0.68);
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.10);
+    color: var(--primary);
+}
+
+.btn-nav-primary,
+.btn-primary,
+.btn-hero-primary {
+    background: var(--primary);
+    color: var(--dark) !important;
+    border: 0;
+    box-shadow: 0 5px 0 #c99e00;
+}
+
+.btn-nav-primary:hover,
+.btn-primary:hover,
+.btn-hero-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 #c99e00, 0 18px 34px rgba(255, 214, 10, 0.24);
+}
+
+.btn-nav-outline,
+.btn-outline {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.btn-nav-outline:hover,
+.btn-outline:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+.mobile-menu {
+    background: var(--dark);
+}
+
+.mobile-link {
+    color: #fff;
+}
+
+.hero {
+    min-height: calc(100vh - 72px);
+    display: flex;
+    align-items: center;
+    background:
+        linear-gradient(rgba(242, 243, 245, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(242, 243, 245, 0.045) 1px, transparent 1px),
+        radial-gradient(circle at 50% 45%, rgba(255, 107, 71, 0.26), transparent 18rem),
+        var(--dark);
+    background-size: 54px 54px, 54px 54px, auto, auto;
+    padding: 54px 0 70px;
+}
+
+.hero::before,
+.hero::after {
+    display: none;
+}
+
+.hero-title {
+    font-family: var(--display);
+    color: #fff;
+    letter-spacing: 0;
+}
+
+.hero-title span,
+.hero-stat-num,
+.section-title span,
+.footer-logo i {
+    color: var(--primary);
+}
+
+.hero-badge {
+    background: rgba(255, 214, 10, 0.14);
+    border-color: rgba(255, 214, 10, 0.34);
+    color: var(--primary);
+}
+
+.hero-desc {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.btn-hero-secondary {
+    background: var(--accent);
+    border: 0;
+    box-shadow: 0 5px 0 #007e9b;
+}
+.hero-visual {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    min-height: 560px;
+    overflow: hidden;
+}
+.yurka-bigword {
+    /*    position: absolute;
+    inset: 6% auto auto 50%;
+    transform: translateX(-50%);
+    font-family: var(--display);
+    font-size: clamp(82px, 14vw, 220px);
+    font-weight: 900;
+    color: rgba(255, 214, 10, 0.18);
+    line-height: 0.9;
+    direction: ltr;
+    pointer-events: none;
+    text-shadow: 0 0 42px rgba(255, 214, 10, 0.22);*/
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -55%);
+    font-family: var(--display);
+    font-size: clamp(120px, 16vw, 260px);
+    font-weight: 900;
+    line-height: .8;
+    letter-spacing: 6px;
+    color: #ffd60a;
+    text-shadow: 0 0 15px rgba(255,214,10,.5), 0 0 40px rgba(255,214,10,.4), 0 0 80px rgba(255,214,10,.25);
+    z-index: 1;
+    pointer-events: none;
+}
+    .yurka-bigword::before {
+        content: "";
+        position: absolute;
+        inset: -40px;
+        background: radial-gradient( circle, rgba(255,214,10,.30) 0%, rgba(255,214,10,.15) 35%, transparent 75% );
+        filter: blur(30px);
+        z-index: -1;
+    }
+.yurka-mascot {
+    /*    position: relative;
+    min-height: 460px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;*/
+    position: relative;
+    z-index: 2;
+    min-height: 560px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+/*    .yurka-mascot::before {
+        content: "";
+        position: absolute;
+        bottom: 34px;
+        width: min(86%, 420px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: rgba(255, 107, 71, 0.26);
+    }
+
+.yurka-mascot::after {
+    content: "";
+    position: absolute;
+    bottom: 20px;
+    width: 58%;
+    height: 42px;
+    background: radial-gradient(closest-side, rgba(0, 0, 0, 0.36), transparent);
+}*/
+
+    .yurka-mascot img {
+            position: relative;
+    z-index: 1;
+    height: clamp(330px, 48vw, 520px);
+    object-fit: contain;
+    filter: drop-shadow(0 26px 34px rgba(0, 0, 0, 0.36));
+    animation: yurkaFloat 4.4s ease-in-out infinite;
+       
+    }
+
+@keyframes yurkaFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(-1deg); }
+}
+
+.section-tag,
+.badge-primary {
+    background: #e8fbff;
+    color: #007e9b;
+}
+
+.subject-card,
+.unit-card,
+.feature-card,
+.form-card,
+.admin-table-card,
+.payment-card,
+.question-card,
+.exam-header,
+.exam-progress,
+.lessons-list {
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+}
+
+.subject-card:hover,
+.unit-card:hover,
+.feature-card:hover {
+    box-shadow: var(--card-shadow-hover);
+}
+
+.subject-card-top,
+.unit-card-thumb,
+.page-header,
+.payment-header,
+.lessons-list-header {
+    background: var(--dark) !important;
+}
+
+.subject-card-arrow,
+.grade-tab:hover,
+.grade-tab.active {
+    background: var(--primary);
+    color: var(--dark);
+    border-color: var(--primary);
+}
+
+.auth-page {
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255, 214, 10, 0.20), transparent 18rem),
+        radial-gradient(circle at 78% 20%, rgba(0, 180, 219, 0.18), transparent 18rem),
+        #f2f3f5;
+}
+
+.auth-logo-icon {
+    background: var(--primary);
+    color: var(--dark);
+    box-shadow: 0 6px 0 #c99e00;
+}
+
+.auth-logo h1 {
+    color: var(--dark);
+}
+
+.auth-logo p {
+    color: var(--text-muted);
+}
+
+.auth-card {
+    border-radius: 28px;
+    border: 1px solid var(--border);
+    box-shadow: 0 24px 70px rgba(10, 37, 64, 0.16);
+}
+
+.footer {
+    background: var(--dark);
+}
+
+.dashboard-layout {
+    background: var(--bg);
+}
+
+.dashboard-sidebar {
+    background: var(--dark);
+}
+
+.sidebar-avatar {
+    background: var(--primary);
+    color: var(--dark);
+}
+
+.sidebar-link.active {
+    background: var(--primary);
+    color: var(--dark);
+}
+
+.vodafone-info {
+    background: linear-gradient(135deg, #e8001a, #c0001a);
+}
+
+.yk-profile-hero {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+    align-items: stretch;
+    margin-bottom: 24px;
+}
+
+.yk-points-card {
+    background: var(--primary);
+    color: var(--dark);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: 0 8px 0 #c99e00, var(--card-shadow);
+}
+
+.yk-points-number {
+    font-family: var(--display);
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 900;
+    line-height: 1;
+}
+
+.yk-avatar-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+}
+
+.yk-avatar-card img,
+.yk-avatar-choice img {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: top center;
+    box-shadow: 0 0 0 5px #fff, 0 0 0 9px var(--primary);
+}
+
+.yk-avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 18px;
+}
+
+.yk-avatar-choice {
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    background: #fff;
+    padding: 16px;
+    cursor: pointer;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+}
+
+.yk-avatar-choice:hover,
+.yk-avatar-choice.selected {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+    box-shadow: var(--card-shadow-hover);
+}
+
+.yk-watch-shell {
+    background: var(--dark);
+    min-height: calc(100vh - 72px);
+    padding: 28px 0 48px;
+}
+
+.yk-question-panel {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-top: 18px;
+    border: 1px solid var(--border);
+}
+
+.yk-mini-answer.correct {
+    background: #dcfce7;
+    border-color: #16a34a;
+}
+
+.yk-mini-answer.wrong {
+    background: #ffe0ef;
+    border-color: #e8137c;
+}
+
+@media (max-width: 900px) {
+    .yk-profile-hero {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        background: var(--dark);
+    }
+
+    .hero {
+        min-height: auto;
+    }
+
+    .yurka-mascot {
+        min-height: 330px;
+    }
+}
+
+
+@media (max-width: 860px) {
+    .register-two-col,
+    .login-two-col {
+        grid-template-columns: 1fr !important;
+    }
+
+    .auth-container {
+        max-width: 100% !important;
+    }
+
+    .register-field-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .register-two-col aside,
+    .login-two-col .yurka-mascot {
+        display: none !important;
+    }
+
+    .auth-card {
+        padding: 22px !important;
+        border-radius: 16px !important;
+    }
+}

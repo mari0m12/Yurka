@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختار شخصيتك · يوركا</title>
+
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/colors.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/typography.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/base.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/styles.css">
+
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: 'Omnes', system-ui, sans-serif;
+    color: var(--text-strong);
+    background: var(--yk-warmgray);
+    min-height: 100vh;
+  }
+
+  .screen { min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* ===== Top bar ===== */
+  .topbar {
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px 34px;
+    border-bottom: 1px solid var(--border-subtle);
+    background: rgba(255,255,255,0.7); backdrop-filter: blur(8px);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .back {
+    width: 46px; height: 46px; flex: none; border-radius: 50%; cursor: pointer;
+    border: 1px solid var(--border-default); background: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 21px; color: var(--yk-deepsea); text-decoration: none;
+    box-shadow: var(--shadow-sm); transition: transform var(--dur-fast), background var(--dur-fast);
+  }
+  .back:hover { transform: translateX(3px); background: var(--yk-ink-50); }
+  .topbar .tt h1 {
+    margin: 0; font-family: 'Omnes', sans-serif; font-weight: 800; font-size: 23px;
+    color: var(--yk-deepsea); letter-spacing: -0.01em;
+  }
+  .topbar .tt .sub { font-size: 13.5px; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
+  .topbar .me { margin-inline-start: auto; display: flex; align-items: center; gap: 10px; }
+  .topbar .me .nm { font-size: 14px; font-weight: 800; color: var(--yk-deepsea); }
+  .topbar .me .pic { width: 40px; height: 40px; border-radius: 50%; background: center/cover var(--yk-teal-100); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--yk-sunshine); }
+
+  /* ===== Body layout ===== */
+  .body { flex: 1; display: grid; grid-template-columns: 360px 1fr; gap: 0; align-items: stretch; }
+
+  /* Preview panel */
+  .preview {
+    background: var(--yk-deepsea); color: #fff;
+    padding: 44px 34px; display: flex; flex-direction: column; align-items: center; text-align: center;
+    position: sticky; top: 87px; height: calc(100vh - 87px);
+  }
+  .preview .eyebrow { font-size: 12.5px; font-weight: 800; letter-spacing: 0.06em; color: var(--yk-sunshine); }
+  .pv-wrap { position: relative; width: 226px; margin: 26px 0 22px; }
+  .pv-glow { position: absolute; inset: -22px; border-radius: 50%; background: radial-gradient(circle, rgba(255,214,10,0.5), rgba(255,214,10,0) 70%); }
+  .pv-img {
+    position: relative; z-index: 1; display: block; width: 226px; height: 226px; border-radius: 50%;
+    background: center top / cover #fff;
+    box-shadow: 0 0 0 6px rgba(255,255,255,0.12), 0 0 0 11px var(--yk-sunshine), var(--shadow-lg);
+  }
+  .pv-name { font-family: 'Omnes', sans-serif; font-weight: 800; font-size: 27px; margin: 4px 0 4px; letter-spacing: -0.01em; }
+  .pv-trait {
+    display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700;
+    background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.14);
+    padding: 7px 14px; border-radius: var(--radius-pill); color: rgba(255,255,255,0.92);
+  }
+  .pv-spacer { flex: 1; }
+  .save {
+    width: 100%; border: none; cursor: pointer;
+    padding: 16px; border-radius: var(--radius-pill);
+    background: var(--yk-sunshine); color: var(--yk-deepsea);
+    font-family: 'Omnes', sans-serif; font-weight: 800; font-size: 17px;
+    box-shadow: 0 6px 0 var(--yk-sunshine-600);
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    transition: transform var(--dur-fast), box-shadow var(--dur-fast);
+    text-decoration: none;
+  }
+  .save:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--yk-sunshine-600); }
+  .save.saved { background: var(--yk-success); color: #fff; box-shadow: 0 6px 0 #0f6e44; }
+
+  /* Grid panel */
+  .picker { padding: 30px 34px 50px; }
+  .sect-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .sect-head h2 { margin: 0; font-family: 'Omnes', sans-serif; font-weight: 800; font-size: 19px; color: var(--yk-deepsea); }
+  .sect-head .count { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+  .grid {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px;
+  }
+  .tile {
+    position: relative; cursor: pointer; padding: 8px; border-radius: 22px;
+    background: #fff; border: 2px solid var(--border-subtle);
+    transition: transform var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-fast);
+  }
+  .tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--border-default); }
+  .tile .ph { display: block; width: 100%; aspect-ratio: 1; border-radius: 50%; background: center top / cover var(--yk-ink-100); }
+  .tile .nm { display: block; text-align: center; font-size: 12.5px; font-weight: 700; color: var(--text-muted); margin-top: 8px; padding-bottom: 2px; }
+  .tile.sel { border-color: var(--yk-sunshine); box-shadow: 0 0 0 4px var(--yk-sunshine-100); transform: translateY(-4px); }
+  .tile.sel .nm { color: var(--yk-deepsea); }
+  .tile .check {
+    position: absolute; top: 6px; inset-inline-start: 6px; z-index: 2;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--yk-sunshine); color: var(--yk-deepsea);
+    display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900;
+    border: 3px solid #fff; box-shadow: var(--shadow-sm);
+    opacity: 0; transform: scale(0.4); transition: opacity var(--dur-fast), transform var(--dur-fast);
+  }
+  .tile.sel .check { opacity: 1; transform: scale(1); }
+
+  @media (max-width: 1100px) {
+    .grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (max-width: 860px) {
+    .body { grid-template-columns: 1fr; }
+    .preview { position: static; height: auto; flex-direction: row; gap: 22px; text-align: right; padding: 24px 28px; }
+    .pv-wrap { width: 120px; margin: 0; flex: none; }
+    .pv-img { width: 120px; height: 120px; }
+    .pv-info { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+    .pv-spacer { display: none; }
+    .save { width: auto; padding: 14px 22px; margin-inline-start: auto; }
+    .grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 520px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .preview { flex-direction: column; text-align: center; }
+    .save { margin: 14px 0 0; width: 100%; }
+  }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" data-presets="react">
+
+    const { useState, useEffect } = React;
+
+    const AVATARS = [
+      { id: 1,  name: 'كريم',   trait: '🧣 المغامر' },
+      { id: 2,  name: 'ليلى',   trait: '🌟 المتألقة' },
+      { id: 3,  name: 'سلمى',   trait: '🧕 الهادئة' },
+      { id: 4,  name: 'آدم',    trait: '🎓 المجتهد' },
+      { id: 5,  name: 'نور',    trait: '💡 الذكية' },
+      { id: 6,  name: 'يوسف',   trait: '🤿 المستكشف' },
+      { id: 7,  name: 'مايا',   trait: '🧢 الجريئة' },
+      { id: 8,  name: 'حمزة',   trait: '⚡ النشيط' },
+      { id: 9,  name: 'جنى',    trait: '🎨 المبدعة' },
+      { id: 10, name: 'زياد',   trait: '🎧 الكوول' },
+      { id: 11, name: 'تالا',   trait: '📚 القارئة' },
+      { id: 12, name: 'مازن',   trait: '🚀 الطموح' },
+    ].map(a => ({ ...a, src: `assets/avatars/avatar-${String(a.id).padStart(2,'0')}.png` }));
+
+    const STORAGE_KEY = 'yurka_avatar';
+
+    function ChooseAvatar() {
+      const [selected, setSelected] = useState(() => {
+        const saved = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+        return AVATARS.some(a => a.id === saved) ? saved : 1;
+      });
+      const [savedFlash, setSavedFlash] = useState(false);
+
+      const chosen = AVATARS.find(a => a.id === selected) || AVATARS[0];
+
+      function pick(id) {
+        setSelected(id);
+        setSavedFlash(false);
+        localStorage.setItem(STORAGE_KEY, String(id));
+      }
+      function save() {
+        localStorage.setItem(STORAGE_KEY, String(selected));
+        setSavedFlash(true);
+        setTimeout(() => { window.location.href = 'Yurka Student Profile.html'; }, 650);
+      }
+
+      return (
+        <div className="screen">
+          <header className="topbar">
+            <a className="back" href="Yurka Student Profile.html" title="رجوع">→</a>
+            <div className="tt">
+              <h1>اختار شخصيتك</h1>
+              <div className="sub">اختر الشخصية التي ستخوض بها المغامرة 🎭</div>
+            </div>
+            <div className="me">
+              <span className="nm">كريم عبد الرحمن</span>
+              <span className="pic" style={{ backgroundImage: `url(${chosen.src})` }}></span>
+            </div>
+          </header>
+
+          <div className="body">
+            {/* Preview */}
+            <aside className="preview">
+              <span className="eyebrow">شخصيتك المختارة</span>
+              <div className="pv-wrap">
+                <span className="pv-glow"></span>
+                <span className="pv-img" style={{ backgroundImage: `url(${chosen.src})` }}></span>
+              </div>
+              <div className="pv-info">
+                <span className="pv-trait">{chosen.trait}</span>
+              </div>
+              <div className="pv-spacer"></div>
+              <button className={'save' + (savedFlash ? ' saved' : '')} onClick={save}>
+                {savedFlash ? <span>✓ تم الحفظ</span> : <span>💾 احفظ شخصيتي</span>}
+              </button>
+            </aside>
+
+            {/* Picker grid */}
+            <main className="picker">
+              <div className="sect-head">
+                <h2>شخصيات يوركا</h2>
+                <span className="count">{AVATARS.length} شخصية</span>
+              </div>
+              <div className="grid">
+                {AVATARS.map(a => (
+                  <button
+                    key={a.id}
+                    className={'tile' + (a.id === selected ? ' sel' : '')}
+                    onClick={() => pick(a.id)}
+                    aria-label={`اختيار ${a.name}`}
+                    aria-pressed={a.id === selected}
+                  >
+                    <span className="check">✓</span>
+                    <span className="ph" style={{ backgroundImage: `url(${a.src})` }}></span>
+                  </button>
+                ))}
+              </div>
+            </main>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<ChooseAvatar />);
+  
+</script>
+</body>
+</html>

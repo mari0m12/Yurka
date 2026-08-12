@@ -1,0 +1,187 @@
+@model EduPlatform.Models.ApplicationUser
+@{
+    ViewData["Title"] = "تفاصيل الطالب";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var enrollments = ViewBag.Enrollments as List<EduPlatform.Models.Enrollment> ?? new();
+    var attempts = ViewBag.Attempts as List<EduPlatform.Models.ExamAttempt> ?? new();
+}
+
+<div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <nav class="sidebar-nav" style="padding-top:24px;">
+            <a href="/Admin" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> الرئيسية</a>
+            <a href="/Admin/Students" class="sidebar-link active"><i class="fas fa-users"></i> الطلاب</a>
+        </nav>
+    </aside>
+    <main class="dashboard-main">
+        <div class="breadcrumb" style="margin-bottom:20px;">
+            <a href="/Admin">الرئيسية</a>
+            <i class="fas fa-chevron-left"></i>
+            <a href="/Admin/Students">الطلاب</a>
+            <i class="fas fa-chevron-left"></i>
+            <span>@Model.FullName</span>
+        </div>
+
+        <!-- Student Profile Card -->
+        <div style="background:linear-gradient(135deg,var(--primary),var(--primary-light)); border-radius:var(--radius); padding:28px; margin-bottom:24px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+            <div style="width:72px; height:72px; background:rgba(255,255,255,0.2); border-radius:20px; display:flex; align-items:center; justify-content:center; color:white; font-weight:900; font-size:30px; flex-shrink:0;">
+                @Model.FullName.Substring(0, 1)
+            </div>
+            <div style="flex:1; color:white;">
+                <h2 style="font-size:22px; font-weight:800; margin-bottom:6px;">@Model.FullName</h2>
+                <div style="display:flex; gap:20px; flex-wrap:wrap; font-size:14px; opacity:0.85;">
+                    <span><i class="fas fa-envelope"></i> @Model.Email</span>
+                    @if (!string.IsNullOrEmpty(Model.Phone))
+                    {
+                        <span><i class="fas fa-phone"></i> @Model.Phone</span>
+                    }
+                    @if (Model.GradeLevel.HasValue)
+                    {
+                        <span><i class="fas fa-graduation-cap"></i> الصف @((int)Model.GradeLevel)</span>
+                    }
+                    <span><i class="fas fa-calendar"></i> مسجل منذ @Model.CreatedAt.ToString("dd/MM/yyyy")</span>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                @if (Model.IsActive)
+                {
+                    <span class="badge badge-success" style="font-size:13px; padding:8px 16px;"><i class="fas fa-check-circle"></i> حساب نشط</span>
+                }
+                else
+                {
+                    <span class="badge badge-danger" style="font-size:13px; padding:8px 16px;"><i class="fas fa-ban"></i> موقوف</span>
+                }
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid" style="margin-bottom:24px;">
+            <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(26,60,107,0.1)">
+                    <i class="fas fa-book-open" style="color:var(--primary)"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>@enrollments.Count</h3>
+                    <p>وحدة مفعّلة</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(16,185,129,0.1)">
+                    <i class="fas fa-trophy" style="color:var(--success)"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>@attempts.Count(a => a.IsPassed)</h3>
+                    <p>امتحان ناجح</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(245,158,11,0.1)">
+                    <i class="fas fa-clipboard-list" style="color:var(--accent)"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>@attempts.Count</h3>
+                    <p>إجمالي الامتحانات</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(239,68,68,0.1)">
+                    <i class="fas fa-times-circle" style="color:var(--danger)"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>@attempts.Count(a => !a.IsPassed)</h3>
+                    <p>امتحان راسب</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enrollments -->
+        <div class="admin-table-card" style="margin-bottom:24px;">
+            <div class="admin-table-header">
+                <h3><i class="fas fa-book-open" style="color:var(--primary)"></i> الوحدات المشترك بها</h3>
+            </div>
+            @if (!enrollments.Any())
+            {
+                <div class="empty-state"><i class="fas fa-book"></i><h3>لا توجد اشتراكات</h3></div>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>الوحدة</th>
+                            <th>المادة</th>
+                            <th>تاريخ التفعيل</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var e in enrollments)
+                        {
+                            <tr>
+                                <td><strong>@e.Unit.Title</strong></td>
+                                <td><span class="badge badge-primary">@e.Unit.Subject?.Name</span></td>
+                                <td style="color:var(--text-muted); font-size:13px;">@e.EnrolledAt.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+
+        <!-- Exam History -->
+        <div class="admin-table-card">
+            <div class="admin-table-header">
+                <h3><i class="fas fa-clipboard-check" style="color:var(--success)"></i> سجل الامتحانات</h3>
+            </div>
+            @if (!attempts.Any())
+            {
+                <div class="empty-state"><i class="fas fa-clipboard"></i><h3>لا توجد امتحانات</h3></div>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>الامتحان</th>
+                            <th>النتيجة</th>
+                            <th>الحالة</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in attempts)
+                        {
+                            int pct = a.TotalPoints > 0 ? (a.Score * 100 / a.TotalPoints) : 0;
+                            <tr>
+                                <td><strong>@a.Exam.Title</strong></td>
+                                <td>
+                                    <strong style="color:@(a.IsPassed ? "var(--success)" : "var(--danger)")">
+                                        @a.Score/@a.TotalPoints (@pct%)
+                                    </strong>
+                                </td>
+                                <td>
+                                    @if (a.IsPassed)
+                                    {
+                                        <span class="badge badge-success"><i class="fas fa-check"></i> ناجح</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger"><i class="fas fa-times"></i> راسب</span>
+                                    }
+                                </td>
+                                <td style="color:var(--text-muted); font-size:13px;">
+                                    @a.FinishedAt?.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+
+        <div style="margin-top:20px;">
+            <a href="/Admin/Students" class="btn btn-outline">
+                <i class="fas fa-arrow-right"></i> العودة لقائمة الطلاب
+            </a>
+        </div>
+    </main>
+</div>

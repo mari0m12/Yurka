@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "غير مصرح";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="min-height:80vh; display:flex; align-items:center; justify-content:center; padding:40px 24px;">
+    <div style="text-align:center; max-width:480px;">
+        <div style="font-size:100px; margin-bottom:16px; opacity:0.15; line-height:1;">🔒</div>
+        <h1 style="font-size:80px; font-weight:900; color:var(--danger); line-height:1; margin-bottom:8px;">403</h1>
+        <h2 style="font-size:24px; font-weight:700; color:var(--dark); margin-bottom:12px;">غير مصرح لك بالدخول</h2>
+        <p style="color:var(--text-muted); font-size:15px; margin-bottom:32px;">
+            ليس لديك صلاحية الوصول لهذه الصفحة.<br>
+            تأكد من تسجيل الدخول بحساب مناسب.
+        </p>
+        <div style="display:flex; gap:12px; justify-content:center;">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i> الصفحة الرئيسية
+            </a>
+            <a href="/Account/Login" class="btn btn-outline">
+                <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+            </a>
+        </div>
+    </div>
+</div>

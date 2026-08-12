@@ -1,0 +1,155 @@
+@model EduPlatform.ViewModels.AdminPaymentsViewModel
+@{
+    ViewData["Title"] = "إدارة الدفعات";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <div class="sidebar-user">
+            <div class="sidebar-avatar" style="background:linear-gradient(135deg,#f59e0b,#f97316)">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div class="sidebar-name">لوحة الأدمن</div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/Admin" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> الرئيسية</a>
+            <a href="/Admin/Payments" class="sidebar-link active"><i class="fas fa-receipt"></i> طلبات الدفع</a>
+            <a href="/Admin/Subjects" class="sidebar-link"><i class="fas fa-book"></i> المواد</a>
+            <a href="/Admin/Students" class="sidebar-link"><i class="fas fa-users"></i> الطلاب</a>
+        </nav>
+    </aside>
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div class="dashboard-title">إدارة طلبات الدفع</div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div style="display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap;">
+            <a href="/Admin/Payments" class="btn btn-sm @(Model.FilterStatus == null ? "btn-primary" : "btn-outline")">
+                الكل (@Model.Payments.Count)
+            </a>
+            <a href="/Admin/Payments?status=Pending" class="btn btn-sm @(Model.FilterStatus == EduPlatform.Models.PaymentStatus.Pending ? "btn-accent" : "btn-outline")">
+                <i class="fas fa-clock"></i> معلق (@Model.Payments.Count(p => p.Status == EduPlatform.Models.PaymentStatus.Pending))
+            </a>
+            <a href="/Admin/Payments?status=Confirmed" class="btn btn-sm @(Model.FilterStatus == EduPlatform.Models.PaymentStatus.Confirmed ? "btn-success" : "btn-outline")">
+                <i class="fas fa-check"></i> مؤكد (@Model.Payments.Count(p => p.Status == EduPlatform.Models.PaymentStatus.Confirmed))
+            </a>
+            <a href="/Admin/Payments?status=Rejected" class="btn btn-sm @(Model.FilterStatus == EduPlatform.Models.PaymentStatus.Rejected ? "btn-danger" : "btn-outline")">
+                <i class="fas fa-times"></i> مرفوض (@Model.Payments.Count(p => p.Status == EduPlatform.Models.PaymentStatus.Rejected))
+            </a>
+        </div>
+
+        <div class="admin-table-card">
+            <div class="admin-table-header">
+                <h3>طلبات الدفع</h3>
+            </div>
+
+            @if (!Model.Payments.Any())
+            {
+                <div class="empty-state"><i class="fas fa-receipt"></i><h3>لا توجد طلبات</h3></div>
+            }
+            else
+            {
+                <div style="overflow-x:auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>الطالب</th>
+                                <th>الوحدة</th>
+                                <th>المبلغ</th>
+                                <th>رقم التحويل</th>
+                                <th>الإيصال</th>
+                                <th>الحالة</th>
+                                <th>التاريخ</th>
+                                <th>إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model.Payments)
+                            {
+                                <tr>
+                                    <td style="color:var(--text-muted); font-size:13px;">@p.Id</td>
+                                    <td>
+                                        <div style="font-weight:600">@p.User.FullName</div>
+                                        <div style="font-size:12px; color:var(--text-muted)">@p.VodafonePhone</div>
+                                    </td>
+                                    <td>
+                                        <div>@p.Unit.Title</div>
+                                        <div style="font-size:12px; color:var(--text-muted)">@p.Unit.Subject?.Name</div>
+                                    </td>
+                                    <td><strong style="color:var(--primary)">@p.Amount.ToString("N0") ج</strong></td>
+                                    <td style="font-size:13px; color:var(--text-muted); max-width:120px; word-break:break-all;">
+                                        @p.TransactionReference
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(p.ReceiptImageUrl))
+                                        {
+                                            <a href="@p.ReceiptImageUrl" target="_blank" class="btn btn-sm btn-outline">
+                                                <i class="fas fa-image"></i> عرض
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span style="color:var(--text-muted); font-size:12px;">لا يوجد</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @switch (p.Status)
+                                        {
+                                            case EduPlatform.Models.PaymentStatus.Pending:
+                                                <span class="badge badge-warning"><i class="fas fa-clock"></i> معلق</span>
+                                                break;
+                                            case EduPlatform.Models.PaymentStatus.Confirmed:
+                                                <span class="badge badge-success"><i class="fas fa-check"></i> مؤكد</span>
+                                                break;
+                                            case EduPlatform.Models.PaymentStatus.Rejected:
+                                                <span class="badge badge-danger"><i class="fas fa-times"></i> مرفوض</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td style="font-size:12px; color:var(--text-muted);">
+                                        @p.RequestedAt.ToString("dd/MM/yyyy HH:mm")
+                                    </td>
+                                    <td>
+                                        @if (p.Status == EduPlatform.Models.PaymentStatus.Pending)
+                                        {
+                                            <div style="display:flex; gap:6px; flex-direction:column;">
+                                                <form asp-controller="Admin" asp-action="ConfirmPayment" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@p.Id" />
+                                                    <button type="submit" class="btn btn-success btn-sm"
+                                                            style="width:100%"
+                                                            data-confirm="تأكيد دفع @p.User.FullName وتفعيل الوحدة؟">
+                                                        <i class="fas fa-check"></i> قبول
+                                                    </button>
+                                                </form>
+                                                <form asp-controller="Admin" asp-action="RejectPayment" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@p.Id" />
+                                                    <button type="submit" class="btn btn-danger btn-sm"
+                                                            style="width:100%"
+                                                            data-confirm="رفض طلب @p.User.FullName؟">
+                                                        <i class="fas fa-times"></i> رفض
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span style="font-size:12px; color:var(--text-muted);">
+                                                @p.ProcessedAt?.ToString("dd/MM/yyyy")
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </main>
+</div>

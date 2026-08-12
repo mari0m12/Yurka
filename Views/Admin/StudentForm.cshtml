@@ -1,0 +1,117 @@
+@model EduPlatform.ViewModels.AdminStudentFormViewModel
+@{
+    bool isEdit = !string.IsNullOrWhiteSpace(Model.Id);
+    ViewData["Title"] = isEdit ? "تعديل طالب" : "إضافة طالب";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string action = isEdit ? "EditStudent" : "CreateStudent";
+    var avatars = Enumerable.Range(1, 12).Select(i => $"/yurka/assets/avatars/avatar-{i:00}.png").ToList();
+    var selected = string.IsNullOrWhiteSpace(Model.ProfileImage) ? avatars.First() : Model.ProfileImage;
+}
+
+<div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <nav class="sidebar-nav" style="padding-top:24px;">
+            <a href="/Admin" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> الرئيسية</a>
+            <a href="/Admin/Subjects" class="sidebar-link"><i class="fas fa-book"></i> المواد</a>
+            <a href="/Admin/Students" class="sidebar-link active"><i class="fas fa-users"></i> الطلاب</a>
+        </nav>
+    </aside>
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div class="dashboard-title">@ViewData["Title"]</div>
+        </div>
+        <div class="form-card" style="max-width:900px;">
+            <form asp-controller="Admin" asp-action="@action" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ProfileImage" id="profileImageInput" value="@selected" />
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label class="form-label">الاسم الكامل <span>*</span></label>
+                        <input asp-for="FullName" class="form-control" required />
+                        <span asp-validation-for="FullName" class="field-validation-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">البريد الإلكتروني <span>*</span></label>
+                        <input asp-for="Email" type="email" class="form-control" required />
+                        <span asp-validation-for="Email" class="field-validation-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رقم الهاتف</label>
+                        <input asp-for="Phone" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رقم ولي الأمر</label>
+                        <input asp-for="ParentPhone" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">المحافظة</label>
+                        <input asp-for="Governorate" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">المركز / المنطقة</label>
+                        <input asp-for="Markaz" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الصف</label>
+                        <select asp-for="GradeLevel" class="form-control form-select">
+                            <option value="">غير محدد</option>
+                            <option value="7">الصف الأول الإعدادي</option>
+                            <option value="8">الصف الثاني الإعدادي</option>
+                            <option value="9">الصف الثالث الإعدادي</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">كلمة المرور @(isEdit ? "(اتركها فارغة بدون تغيير)" : "")</label>
+                        <input asp-for="Password" type="password" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="Password" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-check">
+                        <input asp-for="IsActive" type="checkbox" />
+                        <span>الحساب نشط</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">صورة الطالب</label>
+                    <div class="yk-avatar-grid" style="grid-template-columns:repeat(auto-fill,minmax(86px,1fr));">
+                        @foreach (var avatar in avatars)
+                        {
+                            <button type="button" class="yk-avatar-choice admin-avatar @(avatar == selected ? "selected" : "")" data-avatar="@avatar" style="padding:8px;">
+                                <img src="@avatar" alt="" style="width:64px;height:64px;" />
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert-danger" style="position:static; transform:none; width:100%; max-width:none; margin-bottom:16px;">
+                        @Html.ValidationSummary()
+                    </div>
+                }
+
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ</button>
+                    <a href="/Admin/Students" class="btn btn-outline">إلغاء</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.admin-avatar').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.admin-avatar').forEach(x => x.classList.remove('selected'));
+                button.classList.add('selected');
+                document.getElementById('profileImageInput').value = button.dataset.avatar;
+            });
+        });
+    </script>
+}

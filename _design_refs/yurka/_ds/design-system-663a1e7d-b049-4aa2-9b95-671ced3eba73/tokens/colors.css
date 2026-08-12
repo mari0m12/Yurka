@@ -1,0 +1,112 @@
+/* ============================================================
+   Yurka — Color tokens
+   Source of truth: brand COLOR PALETTE
+   ============================================================ */
+
+:root {
+  /* ---- Brand core ---------------------------------------- */
+  --yk-sunshine: #FFD60A;      /* Sunshine — primary brand, logo, points  */
+  --yk-teal: #00B4DB;          /* Ocean Teal — secondary, boy mascot       */
+  --yk-pink: #FF2E93;          /* Electric Pink — accent, girl mascot       */
+  --yk-coral: #FF6B47;         /* Coral Pop — warm accent, streaks/alerts   */
+  --yk-deepsea: #0A2540;       /* Deep Sea — primary ink / dark surfaces    */
+  --yk-warmgray: #F2F3F5;      /* Warm Gray — app canvas / light surface    */
+
+  /* ---- Sunshine scale ------------------------------------ */
+  --yk-sunshine-50: #FFFBEB;
+  --yk-sunshine-100: #FFF3C4;
+  --yk-sunshine-200: #FFE885;
+  --yk-sunshine-300: #FFDF47;
+  --yk-sunshine-400: #FFD60A;
+  --yk-sunshine-500: #F0C400;
+  --yk-sunshine-600: #C99E00;   /* accessible text on light */
+  --yk-sunshine-700: #9A7800;
+
+  /* ---- Teal scale ---------------------------------------- */
+  --yk-teal-50: #E8FBFF;
+  --yk-teal-100: #C2F2FC;
+  --yk-teal-200: #82E3F7;
+  --yk-teal-300: #38CEED;
+  --yk-teal-400: #00B4DB;
+  --yk-teal-500: #009DC0;
+  --yk-teal-600: #007E9B;
+  --yk-teal-700: #005E74;
+
+  /* ---- Pink scale ---------------------------------------- */
+  --yk-pink-50: #FFEAF4;
+  --yk-pink-100: #FFC9E3;
+  --yk-pink-200: #FF8CC1;
+  --yk-pink-300: #FF579F;
+  --yk-pink-400: #FF2E93;
+  --yk-pink-500: #E8137C;
+  --yk-pink-600: #BB0A63;
+  --yk-pink-700: #8C0049;
+
+  /* ---- Coral scale --------------------------------------- */
+  --yk-coral-50: #FFF1ED;
+  --yk-coral-100: #FFD9CE;
+  --yk-coral-200: #FFB29E;
+  --yk-coral-300: #FF8A6E;
+  --yk-coral-400: #FF6B47;
+  --yk-coral-500: #ED4F28;
+  --yk-coral-600: #C53A18;
+
+  /* ---- Deep Sea / neutral ink scale ---------------------- */
+  --yk-ink-900: #0A2540;       /* Deep Sea */
+  --yk-ink-800: #16385C;
+  --yk-ink-700: #2C4D72;
+  --yk-ink-600: #4A6685;
+  --yk-ink-500: #6B83A0;
+  --yk-ink-400: #94A6BC;
+  --yk-ink-300: #BECBDA;
+  --yk-ink-200: #DCE4ED;
+  --yk-ink-100: #ECF0F5;
+  --yk-ink-50: #F2F3F5;        /* Warm Gray */
+  --yk-white: #FFFFFF;
+
+  /* ---- Semantic status ----------------------------------- */
+  --yk-success: #16A34A;
+  --yk-success-soft: #DCFCE7;
+  --yk-warning: #FF6B47;       /* uses Coral */
+  --yk-warning-soft: #FFE3DA;
+  --yk-danger: #E8137C;        /* uses Pink-500 */
+  --yk-danger-soft: #FFE0EF;
+  --yk-info: #00B4DB;          /* uses Teal */
+  --yk-info-soft: #E8FBFF;
+
+  /* ========================================================
+     Semantic aliases — reference these in components
+     ======================================================== */
+  --color-primary: var(--yk-sunshine);
+  --color-primary-ink: var(--yk-deepsea);      /* text/icon on sunshine */
+  --color-primary-strong: var(--yk-sunshine-500);
+
+  --color-secondary: var(--yk-teal);
+  --color-accent: var(--yk-pink);
+  --color-accent-warm: var(--yk-coral);
+
+  --text-strong: var(--yk-ink-900);
+  --text-body: var(--yk-ink-800);
+  --text-muted: var(--yk-ink-500);
+  --text-faint: var(--yk-ink-400);
+  --text-on-dark: #FFFFFF;
+  --text-on-primary: var(--yk-deepsea);
+
+  --surface-page: var(--yk-ink-50);
+  --surface-card: #FFFFFF;
+  --surface-sunken: var(--yk-ink-100);
+  --surface-dark: var(--yk-deepsea);
+  --surface-dark-raised: var(--yk-ink-800);
+
+  --border-subtle: var(--yk-ink-200);
+  --border-default: var(--yk-ink-300);
+  --border-strong: var(--yk-ink-400);
+
+  --focus-ring: var(--yk-teal-300);
+
+  /* Points / XP / gamification semantics */
+  --xp-color: var(--yk-sunshine);
+  --streak-color: var(--yk-coral);
+  --gem-color: var(--yk-teal);
+  --rank-color: var(--yk-pink);
+}

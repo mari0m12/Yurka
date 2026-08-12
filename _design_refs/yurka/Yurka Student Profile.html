@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بروفايل الطالب · يوركا</title>
+
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/colors.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/typography.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/base.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/styles.css">
+
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: 'Omnes', system-ui, sans-serif;
+    color: var(--text-strong);
+    background: var(--yk-warmgray);
+  }
+  .app { display: flex; min-height: 100vh; }
+
+  /* ============ Sidebar ============ */
+  .sidebar {
+    width: 250px; flex: none;
+    background: var(--yk-deepsea);
+    color: #fff;
+    padding: 22px 16px 20px;
+    display: flex; flex-direction: column; gap: 6px;
+    position: sticky; top: 0; height: 100vh;
+  }
+  .brand { display: flex; align-items: center; gap: 9px; padding: 4px 8px 18px; direction: ltr; }
+  .brand img.mark { height: 30px; }
+  .brand img.word { height: 18px; filter: brightness(0) invert(1); }
+
+  .side-card {
+    display: flex; align-items: center; gap: 11px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 16px; padding: 11px 12px; margin-bottom: 14px;
+  }
+  .side-card .av {
+    width: 46px; height: 46px; border-radius: 50%; flex: none;
+    background: center top / cover var(--yk-teal-100);
+    box-shadow: 0 0 0 3px var(--yk-deepsea), 0 0 0 6px var(--yk-sunshine);
+  }
+  .side-card .nm { font-weight: 800; font-size: 14.5px; line-height: 1.2; }
+  .side-card .rk { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+
+  .nav-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.42); padding: 8px 10px 6px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px; width: 100%;
+    padding: 11px 13px; border-radius: 13px; border: none; cursor: pointer;
+    background: transparent; color: rgba(255,255,255,0.80);
+    font-family: 'Omnes', sans-serif; font-weight: 700; font-size: 15px;
+    text-align: right; text-decoration: none;
+    transition: background var(--dur-fast), color var(--dur-fast);
+  }
+  .nav-item .ic { font-size: 18px; width: 22px; text-align: center; }
+  .nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .nav-item.active {
+    background: var(--yk-sunshine); color: var(--yk-deepsea); font-weight: 800;
+    box-shadow: 0 4px 0 var(--yk-sunshine-600);
+  }
+  .logout {
+    margin-top: auto;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    padding: 13px; border: none; cursor: pointer;
+    background: var(--yk-coral); color: #fff;
+    font-family: 'Omnes', sans-serif; font-weight: 800; font-size: 15.5px;
+    border-radius: var(--radius-pill);
+    box-shadow: 0 5px 0 var(--yk-coral-600);
+    transition: transform var(--dur-fast), box-shadow var(--dur-fast);
+  }
+  .logout:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--yk-coral-600); }
+
+  /* ============ Main ============ */
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .hud {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 16px 32px;
+    background: rgba(255,255,255,0.86); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .hud .crumb { display: flex; align-items: center; gap: 9px; }
+  .hud .crumb h1 {
+    margin: 0; font-family: 'Omnes', sans-serif; font-weight: 800; font-size: 22px;
+    color: var(--yk-deepsea); letter-spacing: -0.01em;
+  }
+  .hud .crumb .sub { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-top: 1px; }
+  .hud-stats { display: flex; align-items: center; gap: 10px; }
+
+  .content { padding: 26px 32px 40px; }
+  .grid { display: grid; grid-template-columns: 1fr 354px; gap: 22px; align-items: start; max-width: 1240px; }
+  .col { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+
+  .card {
+    background: #fff; border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl); padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+  .card-head .ttl { display: flex; align-items: center; gap: 10px; }
+  .card-head h2 {
+    margin: 0; font-family: 'Omnes', sans-serif; font-weight: 800; font-size: 20px;
+    color: var(--yk-deepsea); letter-spacing: -0.01em;
+  }
+  .card-head .hint { font-size: 12.5px; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
+  .chip-icon {
+    width: 38px; height: 38px; border-radius: 12px; flex: none;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 19px;
+  }
+  .num { font-family: var(--font-display); font-weight: 800; font-variant-numeric: tabular-nums; }
+
+  /* ---- Profile card ---- */
+  .profile-card { text-align: center; padding-top: 30px; }
+  .ava-wrap { position: relative; width: 130px; margin: 0 auto 16px; }
+  .ava-glow {
+    position: absolute; inset: -14px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,214,10,0.45), rgba(255,214,10,0) 68%); z-index: 0;
+  }
+  .ava-main {
+    display: block;
+    position: relative; z-index: 1; width: 130px; height: 130px; border-radius: 50%;
+    background: center top / cover var(--yk-teal-100);
+    box-shadow: 0 0 0 5px #fff, 0 0 0 9px var(--yk-sunshine), var(--shadow-md);
+  }
+  .ava-edit {
+    position: absolute; z-index: 2; bottom: 4px; left: 4px;
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    background: var(--yk-teal); color: #fff; border: 3px solid #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+    box-shadow: var(--shadow-sm); transition: transform var(--dur-fast);
+  }
+  .ava-edit:hover { transform: scale(1.08); }
+  .ava-online {
+    position: absolute; z-index: 2; bottom: 10px; right: 8px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--yk-success); border: 4px solid #fff;
+  }
+  .p-name { font-family: 'Omnes', sans-serif; font-weight: 800; font-size: 25px; color: var(--yk-deepsea); margin: 0; letter-spacing: -0.01em; }
+  .p-handle { font-size: 14px; font-weight: 700; color: var(--yk-teal-600); margin: 4px 0 0; direction: ltr; }
+  .p-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 16px 0 6px; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; font-weight: 700; padding: 6px 12px; border-radius: var(--radius-pill);
+  }
+  .tag.teal { background: var(--yk-teal-50); color: var(--yk-teal-700); }
+  .tag.pink { background: var(--yk-pink-50); color: var(--yk-pink-600); }
+  .tag.sun  { background: var(--yk-sunshine-100); color: var(--yk-sunshine-700); }
+
+  .chooser { margin-top: 20px; padding-top: 18px; border-top: 1px dashed var(--border-default); }
+  .chooser .lbl { font-size: 12.5px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; text-align: right; }
+  .ava-row { display: flex; gap: 10px; justify-content: space-between; }
+  .ava-opt {
+    width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; padding: 0;
+    background: center top / cover var(--yk-ink-100);
+    border: 3px solid transparent; position: relative;
+    transition: transform var(--dur-fast), border-color var(--dur-fast);
+  }
+  .ava-opt:hover { transform: translateY(-3px); }
+  .ava-opt.sel { border-color: var(--yk-sunshine); box-shadow: 0 0 0 3px var(--yk-sunshine-100); }
+  .ava-opt.sel::after {
+    content: '✓'; position: absolute; bottom: -3px; left: -3px;
+    width: 19px; height: 19px; border-radius: 50%; background: var(--yk-sunshine); color: var(--yk-deepsea);
+    font-size: 11px; font-weight: 900; display: flex; align-items: center; justify-content: center;
+    border: 2px solid #fff;
+  }
+
+  /* ---- Points card ---- */
+  .points-card {
+    background: var(--yk-sunshine);
+    border: none; color: var(--yk-deepsea); position: relative; overflow: hidden;
+    box-shadow: 0 8px 0 var(--yk-sunshine-600), var(--shadow-md);
+  }
+  .points-card .deco { position: absolute; pointer-events: none; opacity: 0.85; }
+  .points-eyebrow { font-size: 12.5px; font-weight: 800; letter-spacing: 0.04em; opacity: 0.8; }
+  .points-big { display: flex; align-items: baseline; gap: 10px; margin: 6px 0 2px; }
+  .points-big .v { font-family: var(--font-display); font-weight: 800; font-size: 58px; line-height: 0.95; font-variant-numeric: tabular-nums; }
+  .points-big .u { font-weight: 800; font-size: 18px; }
+  .points-sub { font-size: 13.5px; font-weight: 600; color: var(--yk-ink-800); opacity: 0.85; }
+  .points-break { display: flex; gap: 10px; margin-top: 18px; }
+  .pbreak {
+    flex: 1; background: rgba(255,255,255,0.55); border-radius: 14px; padding: 11px 12px; text-align: center;
+  }
+  .pbreak .pv { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--yk-deepsea); }
+  .pbreak .pl { font-size: 11.5px; font-weight: 700; color: var(--yk-ink-700); margin-top: 2px; }
+  .next-reward { margin-top: 16px; }
+  .next-reward .nr-top { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 700; margin-bottom: 7px; }
+  .next-reward .nr-top .nr-val { direction: ltr; white-space: nowrap; }
+  .nr-bar { height: 12px; border-radius: 99px; background: rgba(10,37,64,0.16); overflow: hidden; }
+  .nr-fill { height: 100%; border-radius: 99px; background: var(--yk-deepsea); }
+
+  /* ---- History stats ---- */
+  .hstats { display: flex; gap: 12px; margin-bottom: 20px; }
+  .hstat { flex: 1; background: var(--yk-ink-50); border-radius: 14px; padding: 13px 14px; }
+  .hstat .hv { font-family: var(--font-display); font-weight: 800; font-size: 26px; color: var(--yk-deepsea); display: flex; align-items: baseline; gap: 4px; }
+  .hstat .hl { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-top: 2px; }
+  .hstat .up { font-size: 13px; font-weight: 800; color: var(--yk-success); }
+
+  /* ---- Chart ---- */
+  .chart-box { width: 100%; }
+  .chart-box svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+  /* ---- Session comparison grid ---- */
+  .sess-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 22px; }
+  .sess {
+    border: 1px solid var(--border-subtle); border-radius: 16px; padding: 13px 14px;
+    background: #fff; transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+  }
+  .sess:hover { border-color: var(--border-default); box-shadow: var(--shadow-sm); }
+  .sess .sn { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+  .sess .sv { font-family: var(--font-display); font-weight: 800; font-size: 26px; color: var(--yk-deepsea); margin: 2px 0 8px; }
+  .delta { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 800; padding: 4px 9px; border-radius: var(--radius-pill); }
+  .delta.up { background: var(--yk-success-soft); color: var(--yk-success); }
+  .delta.down { background: var(--yk-danger-soft); color: var(--yk-danger); }
+  .delta.flat { background: var(--yk-ink-100); color: var(--text-muted); }
+
+  /* ---- Trophy ---- */
+  .trophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 8px; justify-items: center; }
+
+  @media (max-width: 1080px) {
+    .grid { grid-template-columns: 1fr; }
+    .sess-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 720px) {
+    .sidebar { display: none; }
+    .content { padding: 20px; }
+    .trophy-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/_ds_bundle.js"></script>
+
+  <script type="text/babel" data-presets="react">
+
+    const { useState } = React;
+    const { Badge, AchievementBadge } = window.DesignSystem_663a1e;
+
+    /* ---------------- Sample data (بيانات تجريبية واقعية) ---------------- */
+    const AVATARS = [
+      { id: 'yuki1', src: 'assets/yuki-front-pockets.png' },
+      { id: 'mira',  src: 'assets/mira-face-closeup.png' },
+      { id: 'yuki2', src: 'assets/yuki-hero-lookup.png' },
+      { id: 'yuki3', src: 'assets/yuki-standing-front.png' },
+      { id: 'gamer', src: 'assets/gamer-mascot.png' },
+    ];
+
+    const STUDENT = {
+      name: 'كريم عبد الرحمن',
+      handle: '@karim_abdo',
+      grade: 'الصف الثاني الإعدادي',
+      rank: 'المركز 3 على الفصل',
+      level: 8,
+      points: 4820,        // نقاط من إجابات الأسئلة
+      correct: 386,        // إجابات صحيحة
+      accuracy: 91,        // الدقة %
+      nextReward: 5000,
+      xp: 6240, streak: 14, gems: 53,
+    };
+
+    // درجات كل حصة (من 100)
+    const SESSIONS = [
+      { n: 'الحصة 1', score: 72 },
+      { n: 'الحصة 2', score: 78 },
+      { n: 'الحصة 3', score: 74 },
+      { n: 'الحصة 4', score: 83 },
+      { n: 'الحصة 5', score: 88 },
+      { n: 'الحصة 6', score: 85 },
+      { n: 'الحصة 7', score: 93 },
+      { n: 'الحصة 8', score: 96 },
+    ];
+
+    const TROPHIES = [
+      { glyph: '🔥', title: 'بطل المواظبة', color: 'coral' },
+      { glyph: '⚡', title: 'صاروخ النقاط', color: 'sunshine' },
+      { glyph: '🎯', title: 'قناص الإجابات', color: 'teal' },
+      { glyph: '🏅', title: 'الأول على الفصل', color: 'pink' },
+      { glyph: '🧠', title: 'عقل رياضي', color: 'teal' },
+      { glyph: '📚', title: 'ملك المذاكرة', locked: true },
+      { glyph: '🏆', title: 'بطل الموسم', locked: true },
+      { glyph: '💎', title: 'جامع الجواهر', locked: true },
+    ];
+    const TROPHY_EARNED = TROPHIES.filter(t => !t.locked).length;
+
+    /* ---------------- Line chart ---------------- */
+    function HistoryChart({ data }) {
+      const W = 720, H = 250, padX = 26, padTop = 26, padBottom = 34;
+      const yMin = 50, yMax = 100;
+      const plotW = W - padX * 2;
+      const plotH = H - padTop - padBottom;
+      const x = i => padX + (plotW * i) / (data.length - 1);
+      const y = v => padTop + plotH * (1 - (v - yMin) / (yMax - yMin));
+      const pts = data.map((d, i) => [x(i), y(d.score)]);
+      const line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+      const area = line + ` L ${pts[pts.length - 1][0].toFixed(1)} ${padTop + plotH} L ${pts[0][0].toFixed(1)} ${padTop + plotH} Z`;
+      const gridVals = [50, 60, 70, 80, 90, 100];
+
+      return (
+        <div className="chart-box">
+          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="مخطط درجات الحصص">
+            <defs>
+              <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--yk-coral)" stopOpacity="0.22" />
+                <stop offset="100%" stopColor="var(--yk-coral)" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            {gridVals.map(v => (
+              <g key={v}>
+                <line x1={padX} x2={W - padX} y1={y(v)} y2={y(v)} stroke="var(--yk-ink-200)" strokeWidth="1" strokeDasharray={v === yMin ? '0' : '4 6'} />
+                <text x={W - padX + 6} y={y(v) + 4} fontSize="12" fontWeight="700" fill="var(--text-faint)" fontFamily="Omnes">{v}</text>
+              </g>
+            ))}
+            <path d={area} fill="url(#areaFill)" />
+            <path d={line} fill="none" stroke="var(--yk-coral)" strokeWidth="3.5" strokeLinejoin="round" strokeLinecap="round" />
+            {data.map((d, i) => {
+              const last = i === data.length - 1;
+              return (
+                <g key={i}>
+                  <circle cx={x(i)} cy={y(d.score)} r={last ? 7 : 5.5}
+                    fill={last ? 'var(--yk-sunshine)' : '#fff'} stroke="var(--yk-coral)" strokeWidth={last ? 4 : 3} />
+                  <text x={x(i)} y={y(d.score) - 14} textAnchor="middle" fontSize="13.5" fontWeight="800"
+                    fill="var(--yk-deepsea)" fontFamily="var(--font-display)">{d.score}</text>
+                  <text x={x(i)} y={H - 12} textAnchor="middle" fontSize="12.5" fontWeight="700"
+                    fill="var(--text-muted)" fontFamily="Omnes">{d.n.replace('الحصة ', 'حصة ')}</text>
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+      );
+    }
+
+    /* ---------------- Session comparison cards ---------------- */
+    function SessionGrid({ data }) {
+      return (
+        <div className="sess-grid">
+          {data.map((d, i) => {
+            const prev = i > 0 ? data[i - 1].score : null;
+            const diff = prev === null ? null : d.score - prev;
+            let cls = 'flat', txt = 'أول حصة', arrow = '•';
+            if (diff !== null) {
+              if (diff > 0) { cls = 'up'; arrow = '▲'; txt = `+${diff} عن السابقة`; }
+              else if (diff < 0) { cls = 'down'; arrow = '▼'; txt = `${diff} عن السابقة`; }
+              else { cls = 'flat'; arrow = '='; txt = 'نفس الدرجة'; }
+            }
+            return (
+              <div className="sess" key={i}>
+                <div className="sn">{d.n}</div>
+                <div className="sv">{d.score}<span style={{ fontSize: 14, color: 'var(--text-faint)' }}>/100</span></div>
+                <span className={'delta ' + cls}><span>{arrow}</span>{txt}</span>
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    /* ---------------- App ---------------- */
+    function ProfilePage() {
+      const [avatar, setAvatar] = useState('yuki1');
+      const chosen = AVATARS.find(a => a.id === avatar) || AVATARS[0];
+
+      const scores = SESSIONS.map(s => s.score);
+      const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+      const best = Math.max(...scores);
+      const totalGain = scores[scores.length - 1] - scores[0];
+      const rewardPct = Math.min(100, Math.round((STUDENT.points / STUDENT.nextReward) * 100));
+
+      const nav = [
+        { ic: '🏠', label: 'الرئيسية' },
+        { ic: '📚', label: 'الكورسات' },
+        { ic: '👤', label: 'بروفايلي', active: true },
+      ];
+
+      return (
+        <div className="app">
+          {/* Sidebar */}
+          <aside className="sidebar">
+            <div className="brand" style={{ justifyContent: 'center', padding: '4px 8px 18px' }}>
+              <img className="mark" src="assets/yurka-mark-tight.svg" alt="" style={{ height: '30px', width: 'auto' }} />
+              <img className="word" src="assets/yurka-wordmark.svg" alt="Yurka" style={{ height: '18px', width: 'auto' }} />
+            </div>
+            <div className="side-card">
+              <span className="av" style={{ backgroundImage: `url(${chosen.src})` }}></span>
+              <div>
+                <div className="nm">{STUDENT.name.split(' ').slice(0, 2).join(' ')}</div>
+                <div className="rk">المستوى {STUDENT.level} · 🔥 {STUDENT.streak} يوم</div>
+              </div>
+            </div>
+            {nav.map((n, i) => (
+              <a key={i} href="#" className={'nav-item' + (n.active ? ' active' : '')}>
+                <span className="ic">{n.ic}</span>{n.label}
+              </a>
+            ))}
+            <button className="logout"><span>↩</span> تسجيل الخروج</button>
+          </aside>
+
+          {/* Main */}
+          <div className="main">
+            <header className="hud">
+              <div className="crumb">
+                <div>
+                  <h1>بروفايل الطالب</h1>
+                  <div className="sub">تابع تقدّمك وقارن درجاتك حصة بحصة 🚀</div>
+                </div>
+              </div>
+              <div className="hud-stats">
+                <span className="tag sun" style={{ fontSize: 13, padding: '8px 13px' }}>⚡ {STUDENT.xp.toLocaleString('en-US')} XP</span>
+                <span className="tag" style={{ fontSize: 13, padding: '8px 13px', background: 'var(--yk-coral-100)', color: 'var(--yk-coral-600)' }}>🔥 {STUDENT.streak} حصة</span>
+              </div>
+            </header>
+
+            <div className="content">
+              <div className="grid">
+                {/* ===== Main column ===== */}
+                <div className="col">
+                  {/* Points counter */}
+                  <div className="card points-card">
+                    <span className="deco" style={{ top: -18, left: -10, fontSize: 96, transform: 'rotate(-12deg)' }}>⚡</span>
+                    <div className="points-eyebrow">نقاطك من إجابات الأسئلة</div>
+                    <div className="points-big">
+                      <span className="v">{STUDENT.points.toLocaleString('en-US')}</span>
+                      <span className="u">نقطة</span>
+                    </div>
+                    <div className="points-sub">جمعتها من حلّ التحديات والإجابة الصحيحة على الأسئلة 🎯</div>
+                    <div className="points-break">
+                      <div className="pbreak"><div className="pv">{STUDENT.correct}</div><div className="pl">إجابة صحيحة</div></div>
+                      <div className="pbreak"><div className="pv">{STUDENT.accuracy}%</div><div className="pl">نسبة الدقة</div></div>
+                      <div className="pbreak"><div className="pv">{STUDENT.rank.replace('المركز ', '#')}</div><div className="pl">ترتيب الفصل</div></div>
+                    </div>
+                    <div className="next-reward">
+                      <div className="nr-top">
+                        <span>المكافأة القادمة 🎁</span>
+                        <span className="nr-val">{STUDENT.points.toLocaleString('en-US')} / {STUDENT.nextReward.toLocaleString('en-US')}</span>
+                      </div>
+                      <div className="nr-bar"><div className="nr-fill" style={{ width: rewardPct + '%' }}></div></div>
+                    </div>
+                  </div>
+
+                  {/* Grade history */}
+                  <div className="card">
+                    <div className="card-head">
+                      <div className="ttl">
+                        <span className="chip-icon" style={{ background: 'var(--yk-coral-100)' }}>📈</span>
+                        <div>
+                          <h2>تطوّر الدرجات</h2>
+                          <div className="hint">درجة كل حصة مقارنة باللي قبلها</div>
+                        </div>
+                      </div>
+                      <Badge color="teal" soft>آخر 8 حصص</Badge>
+                    </div>
+
+                    <div className="hstats">
+                      <div className="hstat"><div className="hv">{avg}<span style={{ fontSize: 14, color: 'var(--text-faint)', fontWeight: 700 }}>/100</span></div><div className="hl">متوسط الدرجات</div></div>
+                      <div className="hstat"><div className="hv">{best}</div><div className="hl">أعلى درجة</div></div>
+                      <div className="hstat"><div className="hv up">+{totalGain}</div><div className="hl">تحسّن من أول حصة</div></div>
+                    </div>
+
+                    <HistoryChart data={SESSIONS} />
+                    <SessionGrid data={SESSIONS} />
+                  </div>
+                </div>
+
+                {/* ===== Side column ===== */}
+                <div className="col">
+                  {/* Profile card */}
+                  <div className="card profile-card">
+                    <div className="ava-wrap">
+                      <span className="ava-glow"></span>
+                      <span className="ava-main" style={{ backgroundImage: `url(${chosen.src})` }}></span>
+                      <span className="ava-online"></span>
+                    </div>
+                    <h2 className="p-name">{STUDENT.name}</h2>
+                    <p className="p-handle">{STUDENT.handle}</p>
+                    <div className="p-tags">
+                      <span className="tag teal">🎓 {STUDENT.grade}</span>
+                      <span className="tag sun">⭐ المستوى {STUDENT.level}</span>
+                      <span className="tag pink">🏅 {STUDENT.rank}</span>
+                    </div>
+                  </div>
+
+                  {/* Trophy case */}
+                  <div className="card">
+                    <div className="card-head">
+                      <div className="ttl">
+                        <span className="chip-icon" style={{ background: 'var(--yk-sunshine-100)' }}>🏆</span>
+                        <div>
+                          <h2>خزانة الإنجازات</h2>
+                          <div className="hint">الميداليات اللي فتحتها</div>
+                        </div>
+                      </div>
+                      <Badge color="sunshine" soft>{TROPHY_EARNED}/{TROPHIES.length}</Badge>
+                    </div>
+                    <div className="trophy-grid">
+                      {TROPHIES.map((t, i) => <AchievementBadge key={i} {...t} size={62} />)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<ProfilePage />);
+  
+</script>
+</body>
+</html>

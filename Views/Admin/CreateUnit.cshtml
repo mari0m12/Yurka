@@ -1,0 +1,61 @@
+@model EduPlatform.ViewModels.UnitFormViewModel
+@{
+    bool isEdit = Model.Id != 0;
+    ViewData["Title"] = isEdit ? "تعديل وحدة" : "إضافة وحدة";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string action = isEdit ? "EditUnit" : "CreateUnit";
+}
+
+<div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <nav class="sidebar-nav" style="padding-top:24px;">
+            <a href="/Admin" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> الرئيسية</a>
+            <a href="/Admin/Subjects" class="sidebar-link"><i class="fas fa-book"></i> المواد</a>
+        </nav>
+    </aside>
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div class="dashboard-title">@ViewData["Title"]</div>
+        </div>
+        <div style="max-width:680px;">
+            <div class="form-card">
+                <form asp-controller="Admin" asp-action="@action" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="SubjectId" />
+
+                    <div class="form-group">
+                        <label class="form-label">عنوان الوحدة <span>*</span></label>
+                        <input asp-for="Title" class="form-control" required />
+                        <span asp-validation-for="Title" class="field-validation-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">وصف الوحدة</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">السعر (جنيه) <span>*</span></label>
+                        <input asp-for="Price" type="number" class="form-control" min="0" step="0.01" required />
+                        <span asp-validation-for="Price" class="field-validation-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ترتيب العرض</label>
+                        <input asp-for="SortOrder" type="number" class="form-control" min="0" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">صورة مصغرة</label>
+                        @if (!string.IsNullOrWhiteSpace(Model.ExistingThumbnail))
+                        {
+                            <img src="@Model.ExistingThumbnail" alt="" style="display:block;max-width:180px;border-radius:12px;margin-bottom:10px;" />
+                        }
+                        <input type="file" asp-for="Thumbnail" class="form-control" accept="image/*" />
+                    </div>
+                    <div style="display:flex; gap:12px;">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ</button>
+                        <a href="/Admin/Units/@Model.SubjectId" class="btn btn-outline">إلغاء</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>

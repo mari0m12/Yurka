@@ -1,0 +1,119 @@
+@model EduPlatform.ViewModels.LessonFormViewModel
+@{
+    bool isEdit = Model.Id != 0;
+    ViewData["Title"] = isEdit ? "تعديل درس" : "إضافة درس";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string action = isEdit ? "EditLesson" : "CreateLesson";
+}
+
+<div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <nav class="sidebar-nav" style="padding-top:24px;">
+            <a href="/Admin" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> الرئيسية</a>
+            <a href="/Admin/Subjects" class="sidebar-link"><i class="fas fa-book"></i> المواد</a>
+        </nav>
+    </aside>
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div class="dashboard-title">@ViewData["Title"]</div>
+        </div>
+        <div style="max-width:640px;">
+            <div class="form-card">
+                <form asp-controller="Admin" asp-action="@action" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="UnitId" />
+
+                    <div class="form-group">
+                        <label class="form-label">عنوان الدرس <span>*</span></label>
+                        <input asp-for="Title" class="form-control" placeholder="مثال: الدرس الأول - مقدمة في الجمع" required />
+                        <span asp-validation-for="Title" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">وصف الدرس</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"
+                                  placeholder="وصف مختصر لما سيتعلمه الطالب في هذا الدرس"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            معرّف الفيديو على يوتيوب <span>*</span>
+                        </label>
+                        <input asp-for="YoutubeVideoId" class="form-control"
+                               placeholder="مثال: dQw4w9WgXcQ (من رابط youtube.com/watch?v=...)" required />
+                        <div class="form-hint">
+                            <i class="fas fa-info-circle"></i>
+                            افتح الفيديو على يوتيوب، انسخ الكود بعد <code>?v=</code> في الرابط
+                        </div>
+                        <span asp-validation-for="YoutubeVideoId" class="field-validation-error"></span>
+                    </div>
+
+                    <!-- Preview -->
+                    <div id="videoPreviewBox" style="display:none; margin-bottom:16px;">
+                        <label class="form-label">معاينة الفيديو</label>
+                        <div style="border-radius:var(--radius-sm); overflow:hidden; aspect-ratio:16/9;">
+                            <iframe id="videoPreviewFrame" width="100%" height="100%"
+                                    frameborder="0" allowfullscreen
+                                    style="border:none;"></iframe>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="form-group">
+                            <label class="form-label">مدة الدرس (دقائق)</label>
+                            <input asp-for="DurationMinutes" type="number" class="form-control" min="0" placeholder="0" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">ترتيب العرض</label>
+                            <input asp-for="SortOrder" type="number" class="form-control" min="0" value="0" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-check">
+                            <input asp-for="IsFreePreview" type="checkbox" />
+                            <span>معاينة مجانية (يشاهده الطالب بدون اشتراك)</span>
+                        </label>
+                    </div>
+
+                    <div style="display:flex; gap:12px; margin-top:8px;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> @(isEdit ? "حفظ التعديلات" : "إضافة الدرس")
+                        </button>
+                        <a href="/Admin/Lessons/@Model.UnitId" class="btn btn-outline">إلغاء</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <script>
+        const ytInput = document.querySelector('input[name="YoutubeVideoId"]');
+        const previewBox = document.getElementById('videoPreviewBox');
+        const previewFrame = document.getElementById('videoPreviewFrame');
+
+        function updatePreview() {
+            const val = ytInput.value.trim();
+            // Extract ID from full URL or use as-is
+            const match = val.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+            const id = match ? match[1] : (val.length === 11 ? val : null);
+            if (id) {
+                previewFrame.src = `https://www.youtube.com/embed/${id}`;
+                previewBox.style.display = 'block';
+                // Also update field with just the ID
+                ytInput.value = id;
+            } else {
+                previewBox.style.display = 'none';
+            }
+        }
+
+        ytInput.addEventListener('blur', updatePreview);
+        ytInput.addEventListener('paste', () => setTimeout(updatePreview, 100));
+
+        // On load if editing
+        if (ytInput.value) updatePreview();
+    </script>
+}

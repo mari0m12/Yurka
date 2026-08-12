@@ -1,0 +1,82 @@
+@model EduPlatform.Models.Subject
+@{
+    ViewData["Title"] = Model.Id == 0 ? "إضافة مادة" : "تعديل مادة";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    bool isEdit = Model.Id != 0;
+    string action = isEdit ? "EditSubject" : "CreateSubject";
+}
+
+<div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <nav class="sidebar-nav" style="padding-top:24px;">
+            <a href="/Admin" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> الرئيسية</a>
+            <a href="/Admin/Subjects" class="sidebar-link active"><i class="fas fa-book"></i> المواد</a>
+        </nav>
+    </aside>
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div class="dashboard-title">@ViewData["Title"]</div>
+        </div>
+
+        <div style="max-width:600px;">
+            <div class="form-card">
+                <form asp-controller="Admin" asp-action="@action" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="form-group">
+                        <label class="form-label">اسم المادة <span>*</span></label>
+                        <input asp-for="Name" class="form-control" placeholder="مثال: الرياضيات" required />
+                        <span asp-validation-for="Name" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">وصف المادة</label>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="وصف مختصر"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">الصف الدراسي <span>*</span></label>
+                        <select asp-for="GradeLevel" class="form-control form-select" required>
+                            <option value="">-- اختر الصف --</option>
+                            <option value="1">الصف الأول الابتدائي</option>
+                            <option value="2">الصف الثاني الابتدائي</option>
+                            <option value="3">الصف الثالث الابتدائي</option>
+                            <option value="4">الصف الرابع الابتدائي</option>
+                            <option value="5">الصف الخامس الابتدائي</option>
+                            <option value="6">الصف السادس الابتدائي</option>
+                            <option value="7">الصف الأول الإعدادي</option>
+                            <option value="8">الصف الثاني الإعدادي</option>
+                            <option value="9">الصف الثالث الإعدادي</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">أيقونة (إيموجي)</label>
+                        <input asp-for="IconClass" class="form-control" placeholder="مثال: 📐 أو 🔬 أو 📖" />
+                        <div class="form-hint">اكتب إيموجي لتمثيل المادة</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ترتيب العرض</label>
+                        <input asp-for="SortOrder" type="number" class="form-control" value="0" min="0" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-check">
+                            <input asp-for="IsActive" type="checkbox" checked />
+                            <span>مادة نشطة (ظاهرة للطلاب)</span>
+                        </label>
+                    </div>
+
+                    <div style="display:flex; gap:12px;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> @(isEdit ? "حفظ التعديلات" : "إضافة المادة")
+                        </button>
+                        <a href="/Admin/Subjects" class="btn btn-outline">إلغاء</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>

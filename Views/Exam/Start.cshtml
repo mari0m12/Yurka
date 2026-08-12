@@ -1,0 +1,100 @@
+@model EduPlatform.ViewModels.ExamViewModel
+@{
+    ViewData["Title"] = Model.Exam.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        @@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.7} }
+        .answer-option input[type="radio"] { display: none; }
+    </style>
+}
+
+<div class="exam-container">
+
+    <!-- Header -->
+    <div class="exam-header">
+        <div>
+            <div style="font-size:12px; color:var(--text-muted); font-weight:600; margin-bottom:4px; text-transform:uppercase;">
+                امتحان
+            </div>
+            <div class="exam-title">@Model.Exam.Title</div>
+        </div>
+        <div class="exam-timer">
+            <i class="fas fa-clock"></i>
+            <span id="examTimer">@Model.Exam.DurationMinutes:00</span>
+        </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="exam-progress">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:13px; color:var(--text-muted);">
+            <span>تمت الإجابة: <strong id="answeredCount" style="color:var(--primary)">0</strong> / @Model.Questions.Count</span>
+            <span><strong style="color:var(--accent)">@Model.Exam.PassingScore%</strong> للنجاح</span>
+        </div>
+        <div class="progress-bar-wrapper">
+            <div class="progress-bar-fill" style="width:0%"></div>
+        </div>
+    </div>
+
+    <!-- Exam Form -->
+    <form id="examForm" asp-controller="Exam" asp-action="Submit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="AttemptId" value="@Model.AttemptId" />
+        <input type="hidden" name="ExamId" value="@Model.Exam.Id" />
+
+        @foreach (var (question, qIndex) in Model.Questions.Select((q, i) => (q, i)))
+        {
+            <div class="question-card" id="qcard-@question.Id">
+                <div class="question-num">سؤال @(qIndex + 1) من @Model.Questions.Count</div>
+                <div class="question-text">@question.Text</div>
+                @if (!string.IsNullOrEmpty(question.ImageUrl))
+                {
+                    <img src="@question.ImageUrl" alt="صورة السؤال" style="max-width:100%; border-radius:var(--radius-sm); margin-bottom:16px;" />
+                }
+                <div class="answers-grid">
+                    @foreach (var answer in question.Answers)
+                    {
+                        <label class="answer-option" data-qid="@question.Id">
+                            <input type="radio" name="Answers[@question.Id]" value="@answer.Id" />
+                            <div class="answer-radio"></div>
+                            <div class="answer-text">@answer.Text</div>
+                        </label>
+                    }
+                </div>
+            </div>
+        }
+
+        <div style="background:white; border-radius:var(--radius); padding:24px; border:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+            <div style="font-size:14px; color:var(--text-muted);">
+                <i class="fas fa-info-circle"></i>
+                تأكد من الإجابة على جميع الأسئلة قبل التسليم
+            </div>
+            <button type="submit" class="btn btn-accent btn-lg"
+                    onclick="return confirm('هل أنت متأكد من تسليم الامتحان؟')">
+                <i class="fas fa-paper-plane"></i>
+                تسليم الامتحان
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        startExamTimer('@Model.EndTime.ToString("yyyy-MM-ddTHH:mm:ssZ")');
+
+        // Handle answer clicks
+        document.querySelectorAll('.answer-option').forEach(option => {
+            option.addEventListener('click', function () {
+                const qid = this.dataset.qid;
+                document.querySelectorAll(`.answer-option[data-qid="${qid}"]`).forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) radio.checked = true;
+                document.getElementById(`qcard-${qid}`)?.classList.add('answered');
+                updateExamProgress();
+            });
+        });
+    </script>
+}

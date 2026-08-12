@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Yurka</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+    <link rel="stylesheet" href="/css/yurka-register.css" />
+    <link rel="stylesheet" href="~/css/yurka-theme.css" asp-append-version="true">
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+<nav class="navbar" id="mainNav">
+    <div class="nav-container">
+        <a href="/" class="nav-brand">
+            <div class="brand-icon">
+                @* <i class="fas fa-bolt"></i> *@
+                    <img src="/images/logo.svg" style="background-color: #17314a;" alt="logo" />
+            </div>
+            <div class="brand-text">
+                <span class="brand-main">Yurka</span>
+                <span class="brand-sub">تعلم الإنجليزي بطريقة ممتعة</span>
+            </div>
+        </a>
+
+        <div class="nav-links">
+            <a href="/" class="nav-link">الرئيسية</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                @if (User.IsInRole("Admin"))
+                {
+                    <a href="/Admin" class="nav-link">لوحة التحكم</a>
+                }
+                else
+                {
+                    <a href="/Student/Dashboard" class="nav-link">
+                        <i class="fas fa-user-astronaut"></i> بروفايلي
+                    </a>
+                    <a href="/Student/Notifications" class="nav-link nav-notif">
+                        <i class="fas fa-bell"></i>
+                    </a>
+                }
+                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-nav-outline">خروج</button>
+                </form>
+            }
+            else
+            {
+                <a href="/Account/Login" class="nav-link">دخول</a>
+                <a href="/Account/Register" class="btn-nav-primary">سجل الآن</a>
+            }
+        </div>
+
+        <button class="nav-toggle" id="navToggle" aria-label="فتح القائمة">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="/" class="mobile-link">الرئيسية</a>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin" class="mobile-link">لوحة التحكم</a>
+        }
+        else
+        {
+            <a href="/Student/Dashboard" class="mobile-link">بروفايلي</a>
+            <a href="/Student/Notifications" class="mobile-link">الإشعارات</a>
+        }
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="mobile-link mobile-link-btn">تسجيل الخروج</button>
+        </form>
+    }
+    else
+    {
+        <a href="/Account/Login" class="mobile-link">تسجيل الدخول</a>
+        <a href="/Account/Register" class="mobile-link mobile-link-accent">سجل الآن</a>
+    }
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible">
+        <i class="fas fa-check-circle"></i> @TempData["Success"]
+        <button class="alert-close"><i class="fas fa-times"></i></button>
+    </div>
+}
+@if (TempData["Warning"] != null)
+{
+    <div class="alert alert-warning alert-dismissible">
+        <i class="fas fa-exclamation-triangle"></i> @TempData["Warning"]
+        <button class="alert-close"><i class="fas fa-times"></i></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible">
+        <i class="fas fa-times-circle"></i> @TempData["Error"]
+        <button class="alert-close"><i class="fas fa-times"></i></button>
+    </div>
+}
+
+<main class="main-content">
+    @RenderBody()
+</main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    @* <i class="fas fa-bolt"></i> *@
+                        <img src="/images/logo.svg" style="background-color: #0a2540; width:50px; height:50px; border-radius:50%;" alt="logo" />
+
+                    <span>Yurka</span>
+                </div>
+                <p>منصة لتدريس الإنجليزية للمرحلة الإعدادية بطريقة ممتعة وسهلة الفهم، مع فيديوهات، تدريبات، نقاط، ومتابعة مستمرة.</p>
+                <div class="footer-social">
+                    <a href="https://www.facebook.com/profile.php?id=61589861033857" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@@yousefshehed" class="social-btn"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://wa.me/+201008174224" class="social-btn"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-links-col">
+                <h4>روابط سريعة</h4>
+                <a href="/">الرئيسية</a>
+                <a href="/Account/Register">تسجيل حساب جديد</a>
+                <a href="/Account/Login">تسجيل الدخول</a>
+            </div>
+            <div class="footer-contact">
+                <h4>تواصل معنا</h4>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>01008174224</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>واتساب: 01008174224</span>
+                </div>
+                <div class="contact-item vodafone-badge">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span> انستا باي: 01008174224</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© @DateTime.Now.Year Yurka - جميع الحقوق محفوظة</p>
+                <p>
+                    Developed by: <a href="https://www.facebook.com/mariam.malak.233851?locale=ar_AR"
+                                     style="text-decoration:none;color:#ffd60a; font-size: 16px;
+                    font-weight: bold;
+                    font-family: cursive;">Eng. Mariam Malak</a>
+                </p>
+        </div>
+    </div>
+</footer>
+
+<script src="~/js/site.js"></script>
+@RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,124 @@
+@model EduPlatform.Models.Exam
+@{
+    ViewData["Title"] = "إدارة الأسئلة";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <nav class="sidebar-nav" style="padding-top:24px;">
+            <a href="/Admin" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> الرئيسية</a>
+            <a href="/Admin/Subjects" class="sidebar-link"><i class="fas fa-book"></i> المواد</a>
+        </nav>
+    </aside>
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div>
+                <div class="dashboard-title">أسئلة: @Model.Title</div>
+                <div style="color:var(--text-muted); font-size:14px;">
+                    @Model.Questions.Count سؤال | @Model.DurationMinutes دقيقة | نجاح @Model.PassingScore%
+                </div>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+
+            <!-- Existing Questions -->
+            <div>
+                <h3 style="font-size:16px; font-weight:700; margin-bottom:16px; color:var(--dark);">
+                    الأسئلة الحالية (@Model.Questions.Count)
+                </h3>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    @if (!Model.Questions.Any())
+                    {
+                        <div class="empty-state"><i class="fas fa-question-circle"></i><h3>لا توجد أسئلة بعد</h3></div>
+                    }
+                    @foreach (var (q, idx) in Model.Questions.Select((x, i) => (x, i)))
+                    {
+                        <div style="background:white; border-radius:var(--radius-sm); border:1px solid var(--border); padding:16px;">
+                            <div style="display:flex; justify-content:space-between; align-items:start; gap:8px; margin-bottom:10px;">
+                                <div style="font-weight:600; font-size:14px;">@(idx + 1). @q.Text</div>
+                                <form asp-controller="Admin" asp-action="DeleteQuestion" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@q.Id" />
+                                    <input type="hidden" name="examId" value="@Model.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                            data-confirm="حذف هذا السؤال؟">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:6px;">
+                                @foreach (var ans in q.Answers)
+                                {
+                                    <div style="padding:6px 10px; border-radius:6px; font-size:13px;
+                                         background:@(ans.IsCorrect ? "#d1fae5" : "#f8fafc");
+                                         border:1px solid @(ans.IsCorrect ? "var(--success)" : "var(--border)");
+                                         color:@(ans.IsCorrect ? "#065f46" : "var(--text-muted)");">
+                                        @if (ans.IsCorrect) { <i class="fas fa-check-circle"></i> }
+                                        @ans.Text
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Add Question Form -->
+            <div>
+                <h3 style="font-size:16px; font-weight:700; margin-bottom:16px; color:var(--dark);">إضافة سؤال جديد</h3>
+                <div class="form-card">
+                    <form asp-controller="Admin" asp-action="AddQuestion" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="examId" value="@Model.Id" />
+
+                        <div class="form-group">
+                            <label class="form-label">نص السؤال <span>*</span></label>
+                            <textarea name="text" class="form-control" rows="3" placeholder="اكتب السؤال هنا..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">الدرجات</label>
+                            <input type="number" name="points" class="form-control" value="1" min="1" max="10" />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">الإجابات <span>*</span> <span style="font-size:12px; color:var(--text-muted)">(اختر الصح)</span></label>
+                            <div id="answersContainer" style="display:flex; flex-direction:column; gap:10px;">
+                                @for (int i = 0; i < 4; i++)
+                                {
+                                    <div class="answer-input-row" style="display:flex; align-items:center; gap:10px;">
+                                        <div style="display:flex; align-items:center; gap:6px;">
+                                            <input type="radio" name="correctAnswerIndex" value="@i"
+                                                   @(i == 0 ? "checked" : "")
+                                                   style="width:18px; height:18px; accent-color:var(--success);" />
+                                            <span style="font-size:12px; color:var(--text-muted); white-space:nowrap;">صح</span>
+                                        </div>
+                                        <input type="text" name="answerTexts" class="form-control"
+                                               placeholder="إجابة @(i + 1)" required />
+                                    </div>
+                                }
+                            </div>
+                            <button type="button" id="addAnswerBtn" class="btn btn-outline btn-sm" style="margin-top:10px;">
+                                <i class="fas fa-plus"></i> إضافة إجابة
+                            </button>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full">
+                            <i class="fas fa-plus-circle"></i> إضافة السؤال
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <style>
+        @@media (max-width:768px) {
+            .dashboard-main > div { grid-template-columns: 1fr !important; }
+        }
+    </style>
+}

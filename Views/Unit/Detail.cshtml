@@ -1,0 +1,115 @@
+@model EduPlatform.ViewModels.UnitDetailViewModel
+@{
+    ViewData["Title"] = Model.Unit.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-header">
+    <div class="page-header-container">
+        <div class="breadcrumb" style="color:rgba(255,255,255,0.6)">
+            <a href="/" style="color:var(--primary)">الرئيسية</a>
+            <i class="fas fa-chevron-left"></i>
+            <a href="/Subject/Detail/@Model.Unit.SubjectId" style="color:var(--primary)">@Model.Unit.Subject.Name</a>
+            <i class="fas fa-chevron-left"></i>
+            <span>@Model.Unit.Title</span>
+        </div>
+        <h1>@Model.Unit.Title</h1>
+        @if (!string.IsNullOrEmpty(Model.Unit.Description))
+        {
+            <p>@Model.Unit.Description</p>
+        }
+    </div>
+</div>
+
+<div class="section-container" style="padding-bottom:64px;">
+    @if (Model.UnitExams.Any())
+    {
+        <div style="background:var(--dark); border-radius:var(--radius); padding:24px 28px; margin-bottom:32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; box-shadow:var(--card-shadow);">
+            <div>
+                <div style="color:var(--primary); font-size:13px; margin-bottom:4px; font-weight:800;">
+                    <i class="fas fa-clipboard-list"></i> امتحان الوحدة الكاملة
+                </div>
+                <div style="color:white; font-weight:800; font-size:18px;">@Model.UnitExams.First().Title</div>
+                <div style="color:rgba(255,255,255,0.65); font-size:13px; margin-top:4px;">
+                    <i class="fas fa-clock"></i> @Model.UnitExams.First().DurationMinutes دقيقة
+                    &nbsp;|&nbsp;
+                    <i class="fas fa-redo"></i> @Model.UnitExams.First().MaxAttempts محاولات مسموحة
+                </div>
+            </div>
+            <a href="/Exam/Start/@Model.UnitExams.First().Id" class="btn btn-primary">
+                <i class="fas fa-play-circle"></i>
+                ابدأ امتحان الوحدة
+            </a>
+        </div>
+    }
+
+    <h2 style="font-size:22px; font-weight:900; color:var(--dark); margin-bottom:20px;">
+        دروس الوحدة
+        <span style="font-size:14px; color:var(--text-muted); font-weight:600; margin-right:8px;">
+            (@Model.Lessons.Count درس)
+        </span>
+    </h2>
+
+    @if (!Model.Lessons.Any())
+    {
+        <div class="empty-state">
+            <i class="fas fa-video-slash"></i>
+            <h3>لا توجد دروس بعد</h3>
+            <p>سيتم إضافة الدروس قريبًا.</p>
+        </div>
+    }
+    else
+    {
+        <div style="display:flex; flex-direction:column; gap:12px;">
+            @foreach (var (item, index) in Model.Lessons.Select((x, i) => (x, i)))
+            {
+                <div class="unit-lesson-item" style="background:white; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; transition:all 0.2s; box-shadow:var(--card-shadow);">
+                    <div style="display:flex; align-items:stretch;">
+                        <div style="width:70px; background:var(--primary); display:flex; align-items:center; justify-content:center; color:var(--dark); font-size:22px; font-weight:900; flex-shrink:0;">
+                            @(index + 1)
+                        </div>
+                        <div style="flex:1; padding:18px 20px;">
+                            <div style="display:flex; align-items:start; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+                                <div>
+                                    <div style="font-size:17px; font-weight:800; color:var(--dark); margin-bottom:4px;">@item.Lesson.Title</div>
+                                    @if (!string.IsNullOrEmpty(item.Lesson.Description))
+                                    {
+                                        <div style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">@item.Lesson.Description</div>
+                                    }
+                                    <div style="display:flex; gap:16px; font-size:12px; color:var(--text-muted); flex-wrap:wrap;">
+                                        @if (item.Lesson.DurationMinutes > 0)
+                                        {
+                                            <span><i class="fas fa-clock" style="color:var(--accent)"></i> @item.Lesson.DurationMinutes دقيقة</span>
+                                        }
+                                        @if (item.LessonExams.Any())
+                                        {
+                                            <span><i class="fas fa-tasks" style="color:var(--warning)"></i> @item.LessonExams.Count امتحان</span>
+                                        }
+                                        @if (item.LastAttempt != null)
+                                        {
+                                            <span style="color:@(item.LastAttempt.IsPassed ? "var(--success)" : "var(--danger)")">
+                                                <i class="fas fa-@(item.LastAttempt.IsPassed ? "check" : "times")-circle"></i>
+                                                آخر نتيجة: @item.LastAttempt.Score / @item.LastAttempt.TotalPoints
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+                                    @if (item.LessonExams.Any())
+                                    {
+                                        <a href="/Exam/Start/@item.LessonExams.First().Id" class="btn btn-outline btn-sm">
+                                            <i class="fas fa-pencil-alt"></i> امتحان
+                                        </a>
+                                    }
+                                    <a href="/Unit/Watch/@item.Lesson.Id" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-play"></i> شاهد الدرس
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,181 @@
+@model EduPlatform.ViewModels.StudentDashboardViewModel
+@{
+    ViewData["Title"] = "بروفايل الطالب";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var gradeNames = new Dictionary<int, string>
+    {
+        {7,"الصف الأول الإعدادي"}, {8,"الصف الثاني الإعدادي"}, {9,"الصف الثالث الإعدادي"}
+    };
+    var avatar = string.IsNullOrWhiteSpace(Model.User.ProfileImage) ? "/yurka/assets/avatars/avatar-01.png" : Model.User.ProfileImage;
+    var totalPoints = Model.TotalPoints;
+    var accuracy = Model.AccuracyPercent;
+}
+
+<div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <div class="sidebar-user">
+            <div style="display:flex; justify-content:center; margin-bottom:14px;">
+                <img src="@avatar" alt="@Model.User.FullName" style="width:96px;height:96px;border-radius:50%;object-fit:cover;object-position:top center;box-shadow:0 0 0 4px var(--dark),0 0 0 8px var(--primary);" />
+            </div>
+            <div class="sidebar-name">@Model.User.FullName</div>
+            <div class="sidebar-grade">
+                @(Model.User.GradeLevel.HasValue ? gradeNames.GetValueOrDefault((int)Model.User.GradeLevel.Value, "غير محدد") : "غير محدد")
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/Student/Dashboard" class="sidebar-link active"><i class="fas fa-user-astronaut"></i> بروفايلي</a>
+            <a href="/" class="sidebar-link"><i class="fas fa-book-open"></i> الكورسات</a>
+            <a href="#enrollments" class="sidebar-link"><i class="fas fa-layer-group"></i> وحداتي</a>
+            <a href="#payments" class="sidebar-link"><i class="fas fa-receipt"></i> طلبات الدفع</a>
+            <a href="#history" class="sidebar-link"><i class="fas fa-chart-line"></i> الهستوري</a>
+            <a href="/Student/Avatar" class="sidebar-link"><i class="fas fa-id-badge"></i> تغيير الصورة</a>
+        </nav>
+    </aside>
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div>
+                <div class="dashboard-title">أهلاً، @Model.User.FullName</div>
+                <div style="color:var(--text-muted); font-size:14px; margin-top:4px;">تابع نقاطك، كورساتك، ودرجاتك من هنا.</div>
+            </div>
+            <a href="/" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> اشترك في وحدة جديدة</a>
+        </div>
+
+        <div class="yk-profile-hero">
+            <div class="yk-points-card">
+                <div style="font-weight:800; opacity:.78;">نقاطك من إجابات الأسئلة</div>
+                <div class="yk-points-number">@totalPoints.ToString("N0")</div>
+                <div style="font-weight:700;">نقطة</div>
+                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:22px;">
+                    <div style="background:rgba(255,255,255,.55); border-radius:14px; padding:12px; text-align:center;">
+                        <strong>@Model.TotalEnrollments</strong><br><span style="font-size:12px;">وحدة مفعلة</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,.55); border-radius:14px; padding:12px; text-align:center;">
+                        <strong>@Model.PassedExams</strong><br><span style="font-size:12px;">امتحان ناجح</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,.55); border-radius:14px; padding:12px; text-align:center;">
+                        <strong>@accuracy%</strong><br><span style="font-size:12px;">دقة الإجابات</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="yk-avatar-card">
+                <img src="@avatar" alt="@Model.User.FullName" />
+                <h2 style="margin-top:18px; font-size:22px;">@Model.User.FullName</h2>
+                <p style="color:var(--text-muted); margin-bottom:14px;">@(Model.User.GradeLevel.HasValue ? gradeNames.GetValueOrDefault((int)Model.User.GradeLevel.Value, "غير محدد") : "غير محدد")</p>
+                <a href="/Student/Avatar" class="btn btn-outline btn-sm"><i class="fas fa-pen"></i> تغيير الصورة</a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#e8fbff"><i class="fas fa-book" style="color:var(--accent)"></i></div>
+                <div class="stat-info"><h3>@Model.TotalEnrollments</h3><p>وحدة مفعلة</p></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#ffe3da"><i class="fas fa-clock" style="color:var(--warning)"></i></div>
+                <div class="stat-info"><h3>@Model.PendingPayments.Count</h3><p>طلب دفع قيد المراجعة</p></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#dcfce7"><i class="fas fa-trophy" style="color:var(--success)"></i></div>
+                <div class="stat-info"><h3>@Model.PassedExams</h3><p>امتحان ناجح</p></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#fff3c4"><img src="/images/logo.svg" style="width:30px;height:30px; border-radius:40%;" alt="Alternate Text" /></div>
+                <div class="stat-info"><h3>@totalPoints</h3><p>نقطة</p></div>
+            </div>
+        </div>
+
+        <div id="enrollments" class="admin-table-card" style="margin-bottom:24px;">
+            <div class="admin-table-header"><h3><i class="fas fa-book-open" style="color:var(--accent)"></i> وحداتي المفعلة</h3></div>
+            @if (Model.Enrollments.Any())
+            {
+                <table class="table">
+                    <thead><tr><th>الوحدة</th><th>المادة</th><th>تاريخ التفعيل</th><th></th></tr></thead>
+                    <tbody>
+                    @foreach (var e in Model.Enrollments)
+                    {
+                        <tr>
+                            <td><strong>@e.Unit.Title</strong></td>
+                            <td><span class="badge badge-primary">@e.Unit.Subject.Name</span></td>
+                            <td style="color:var(--text-muted); font-size:13px;">@e.EnrolledAt.ToString("dd/MM/yyyy")</td>
+                            <td><a href="/Unit/Detail/@e.UnitId" class="btn btn-primary btn-sm"><i class="fas fa-play"></i> ادخل</a></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="fas fa-book"></i>
+                    <h3>لا توجد وحدات مفعلة بعد</h3>
+                    <p>اشترك في وحدة لتبدأ رحلتك.</p>
+                    <a href="/" class="btn btn-primary" style="margin-top:16px;">تصفح الكورسات</a>
+                </div>
+            }
+        </div>
+
+        @if (Model.PendingPayments.Any())
+        {
+            <div id="payments" class="admin-table-card" style="margin-bottom:24px;">
+                <div class="admin-table-header"><h3><i class="fas fa-clock" style="color:var(--warning)"></i> طلبات الدفع قيد المراجعة</h3></div>
+                <table class="table">
+                    <thead><tr><th>الوحدة</th><th>المبلغ</th><th>تاريخ الطلب</th><th>الحالة</th></tr></thead>
+                    <tbody>
+                    @foreach (var p in Model.PendingPayments)
+                    {
+                        <tr>
+                            <td><strong>@p.Unit.Title</strong></td>
+                            <td><strong style="color:var(--dark)">@p.Amount.ToString("N0") جنيه</strong></td>
+                            <td style="color:var(--text-muted); font-size:13px;">@p.RequestedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td><span class="badge badge-warning"><i class="fas fa-clock"></i> قيد المراجعة</span></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <div id="history" class="admin-table-card">
+            <div class="admin-table-header"><h3><i class="fas fa-chart-line" style="color:var(--success)"></i> هستوري الدرجات</h3></div>
+            @if (Model.RecentAttempts.Any())
+            {
+                <table class="table">
+                    <thead><tr><th>الامتحان</th><th>النقاط</th><th>النسبة</th><th>الحالة</th><th>التاريخ</th><th></th></tr></thead>
+                    <tbody>
+                    @foreach (var a in Model.RecentAttempts)
+                    {
+                        int pct = a.TotalPoints > 0 ? (a.Score * 100 / a.TotalPoints) : 0;
+                        <tr>
+                            <td><strong>@a.Exam.Title</strong></td>
+                            <td><strong>@a.Score / @a.TotalPoints</strong></td>
+                            <td><strong style="color:@(a.IsPassed ? "var(--success)" : "var(--danger)")">@pct%</strong></td>
+                            <td>
+                                @if (a.IsPassed)
+                                {
+                                    <span class="badge badge-success"><i class="fas fa-check"></i> ناجح</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger"><i class="fas fa-times"></i> حاول تاني</span>
+                                }
+                            </td>
+                            <td style="color:var(--text-muted); font-size:13px;">@a.FinishedAt?.ToString("dd/MM/yyyy")</td>
+                            <td><a href="/Exam/Result/@a.Id" class="btn btn-outline btn-sm">مراجعة</a></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="fas fa-clipboard"></i>
+                    <h3>لسه مفيش امتحانات</h3>
+                    <p>ابدأ حل الامتحانات عشان نقاطك وهستوري درجاتك يظهروا هنا.</p>
+                </div>
+            }
+        </div>
+    </main>
+</div>

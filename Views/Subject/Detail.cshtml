@@ -1,0 +1,106 @@
+@model EduPlatform.ViewModels.SubjectDetailViewModel
+@{
+    ViewData["Title"] = Model.Subject.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-header">
+    <div class="page-header-container">
+        <div class="breadcrumb" style="color:rgba(255,255,255,0.6)">
+            <a href="/" style="color:var(--primary)">الرئيسية</a>
+            <i class="fas fa-chevron-left"></i>
+            <span>@Model.Subject.Name</span>
+        </div>
+        <h1>@Model.Subject.Name</h1>
+        <p>@Model.Subject.Description</p>
+    </div>
+</div>
+
+<div class="section-container" style="padding-top:0; padding-bottom:64px;">
+    @if (!Model.Units.Any())
+    {
+        <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <h3>لا توجد وحدات متاحة بعد</h3>
+            <p>سيتم إضافة الوحدات قريبًا.</p>
+        </div>
+    }
+    else
+    {
+        <div style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <h2 style="font-size:24px; font-weight:900; color:var(--dark)">
+                وحدات الكورس
+                <span style="font-size:14px; color:var(--text-muted); font-weight:600; margin-right:8px;">
+                    (@Model.Units.Count وحدة)
+                </span>
+            </h2>
+        </div>
+
+        <div class="units-grid">
+            @foreach (var item in Model.Units)
+            {
+                <div class="unit-card">
+                    <div class="unit-card-thumb">
+                        @if (!string.IsNullOrEmpty(item.Unit.ThumbnailUrl))
+                        {
+                            <img src="@item.Unit.ThumbnailUrl" alt="@item.Unit.Title" />
+                        }
+                        else
+                        {
+                            <img src="/yurka/assets/yuki-front-pockets.png" alt="" style="object-fit:contain; padding:12px;" />
+                        }
+                        @if (item.IsEnrolled)
+                        {
+                            <span class="unit-card-badge" style="background:rgba(22,163,74,0.9)">
+                                <i class="fas fa-check-circle"></i> مفعل
+                            </span>
+                        }
+                        else if (item.HasPendingPayment)
+                        {
+                            <span class="unit-card-badge" style="background:rgba(255,107,71,0.95)">
+                                <i class="fas fa-clock"></i> قيد المراجعة
+                            </span>
+                        }
+                    </div>
+                    <div class="unit-card-body">
+                        <div class="unit-card-title">@item.Unit.Title</div>
+                        @if (!string.IsNullOrEmpty(item.Unit.Description))
+                        {
+                            <div class="unit-card-desc">@item.Unit.Description</div>
+                        }
+                        <div class="unit-card-meta">
+                            <span><i class="fas fa-play-circle"></i> @item.LessonsCount درس</span>
+                            <span><i class="fas fa-tasks"></i> @item.ExamsCount امتحان</span>
+                        </div>
+                        <div class="unit-card-footer">
+                            <div class="unit-price">@item.Unit.Price.ToString("N0") <span>جنيه</span></div>
+
+                            @if (item.IsEnrolled)
+                            {
+                                <a href="/Unit/Detail/@item.Unit.Id" class="btn btn-success btn-sm">
+                                    <i class="fas fa-play"></i> ادخل الوحدة
+                                </a>
+                            }
+                            else if (item.HasPendingPayment)
+                            {
+                                <span class="btn btn-pending btn-sm"><i class="fas fa-clock"></i> قيد المراجعة</span>
+                            }
+                            else if (Model.IsLoggedIn)
+                            {
+                                <a href="/Unit/Purchase/@item.Unit.Id" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-bolt"></i> اشترك الآن
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="/Account/Login" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-lock"></i> سجل للشراء
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

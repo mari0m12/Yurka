@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إنشاء حساب جديد · يوركا</title>
+
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/colors.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/typography.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/base.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/styles.css">
+
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100vh;
+    font-family: 'Omnes', system-ui, sans-serif;
+    color: var(--text-strong);
+    background: #FFFEF7;
+  }
+  .page { position: relative; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+
+  /* ---------- Header band (mirrors landing) ---------- */
+  .topbar { position: relative; z-index: 5; overflow: hidden; }
+  .topbar-inner {
+    position: relative; z-index: 1; background: var(--yk-deepsea);
+    display: flex; align-items: center; justify-content: flex-start;
+    flex-direction: row-reverse; padding: 8px 56px 6px;
+  }
+  .wave-bottom { display: block; width: 100%; height: 16px; margin-top: -1px; position: relative; z-index: 0; }
+  .wave-bottom path { fill: var(--yk-deepsea); }
+  .logo { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; direction: ltr; }
+  .logo-mark { height: 30px; width: auto; display: block; }
+  .logo-word { height: 19px; width: auto; display: block; }
+
+  /* ---------- Layout ---------- */
+  .signup-wrap {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 32px 24px 44px;
+  }
+  .blob { position: absolute; border-radius: 50%; opacity: 0.9; pointer-events: none; }
+
+  .card {
+    position: relative; z-index: 2;
+    width: 100%; max-width: 980px;
+    background: var(--surface-card);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.05fr 0.82fr; /* form | side */
+  }
+
+  /* ----- Form side ----- */
+  .form-side { padding: 34px 38px 38px; }
+  .form-head { margin-bottom: 22px; }
+  .form-eyebrow {
+    display: inline-block; font-weight: 700; font-size: 12px; letter-spacing: 0.08em;
+    color: var(--yk-teal-600); margin-bottom: 8px;
+  }
+  .form-title {
+    font-family: 'Omnes', sans-serif; font-weight: 800;
+    font-size: 32px; line-height: 1.1; letter-spacing: -0.01em;
+    color: var(--yk-deepsea); margin: 0 0 6px;
+  }
+  .form-sub { font-size: 15px; color: var(--text-muted); margin: 0; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .col-2 { grid-column: span 2; }
+
+  .field-label { font-size: 14px; font-weight: 600; color: var(--text-strong); margin-bottom: 6px; display: block; }
+  .field-box {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface-card); border-radius: var(--radius-md);
+    border: 2px solid var(--border-default); padding: 12px 16px;
+    transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+  }
+  .field-box:focus-within { border-color: var(--yk-teal); box-shadow: 0 0 0 4px var(--yk-teal-100); }
+  .field-box.invalid { border-color: var(--yk-danger); }
+  .field-box select, .field-box input {
+    border: none; outline: none; flex: 1; background: transparent;
+    font-family: var(--font-sans); font-size: 16px; color: var(--text-strong); min-width: 0;
+  }
+  .field-box select { appearance: none; -webkit-appearance: none; cursor: pointer; }
+  .field-box select:disabled { color: var(--text-faint); cursor: not-allowed; }
+  .field-ic { color: var(--text-muted); display: flex; font-size: 17px; }
+  .chev { color: var(--text-muted); font-size: 12px; pointer-events: none; }
+  .eye { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 18px; padding: 0; display: flex; }
+  .field-err { font-size: 12px; color: var(--yk-danger); margin-top: 5px; display: block; }
+
+  .gender-row { display: flex; gap: 12px; }
+  .gender-pill {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px; border-radius: var(--radius-md); border: 2px solid var(--border-default);
+    background: #fff; font-weight: 700; font-size: 16px; color: var(--text-strong);
+    cursor: pointer; transition: border-color var(--dur-base), background var(--dur-base), color var(--dur-base);
+  }
+  .gender-pill .g-ic { font-size: 18px; }
+  .gender-pill.active { border-color: var(--yk-teal); background: var(--yk-teal-50); color: var(--yk-teal-700); }
+  .gender-pill.invalid { border-color: var(--yk-danger); }
+
+  .submit-row { margin-top: 24px; }
+  .login-link { margin: 16px 0 0; text-align: center; font-size: 15px; color: var(--text-muted); }
+  .login-link a { color: var(--yk-teal-600); font-weight: 700; text-decoration: none; }
+  .login-link a:hover { text-decoration: underline; }
+
+  /* ----- Mascot side ----- */
+  .mascot-side {
+    position: relative; background: var(--yk-deepsea); overflow: hidden;
+    display: flex; flex-direction: column; padding: 34px 30px 0;
+  }
+  .mascot-side h2 {
+    color: #fff; font-family: 'Omnes', sans-serif; font-weight: 800;
+    font-size: 26px; line-height: 1.15; margin: 0 0 6px; position: relative; z-index: 2;
+  }
+  .mascot-side h2 .hi { color: var(--yk-sunshine-400); }
+  .mascot-side p { color: rgba(255,255,255,0.82); font-size: 14px; margin: 0 0 18px; position: relative; z-index: 2; }
+  .perks { display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 2; }
+  .perk {
+    display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 600; font-size: 14px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+    padding: 9px 14px; border-radius: var(--radius-pill);
+  }
+  .perk .p-ic { font-size: 17px; }
+
+  /* floating coins / game / classroom decor */
+  .floaters { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+  .float {
+    position: absolute; font-size: 26px; opacity: 0.85;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    animation: floatY 5.5s var(--ease-in-out) infinite;
+    will-change: transform;
+  }
+  @media (prefers-reduced-motion: reduce) { .float { animation: none; } }
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0) rotate(-7deg); }
+    50%      { transform: translateY(-14px) rotate(7deg); }
+  }
+  .coin {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; font-weight: 800; color: var(--yk-sunshine-700);
+    background: radial-gradient(circle at 35% 30%, #FFE680, var(--yk-sunshine-400) 60%, var(--yk-sunshine-600));
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 -2px 3px rgba(0,0,0,0.18);
+    border: 2px solid var(--yk-sunshine-600);
+  }
+  .mascot-stage { position: relative; flex: 1; min-height: 200px; display: flex; align-items: flex-end; justify-content: center; margin-top: 8px; z-index: 2; }
+  .mascot-stage img { position: relative; z-index: 1; height: 300px; width: auto; filter: drop-shadow(0 18px 22px rgba(0,0,0,0.28)); }
+
+  /* ----- Success ----- */
+  .success { text-align: center; padding: 30px 10px; }
+  .success .burst { font-size: 64px; line-height: 1; margin-bottom: 12px; }
+  .success h2 { font-size: 30px; font-weight: 800; color: var(--yk-deepsea); margin: 0 0 8px; }
+  .success p { color: var(--text-muted); font-size: 16px; margin: 0 0 24px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px) {
+    .topbar-inner { padding: 8px 22px 6px; }
+    .card { grid-template-columns: 1fr; max-width: 560px; }
+    .mascot-side { order: -1; flex-direction: row; align-items: center; gap: 16px; padding: 22px 24px; }
+    .mascot-side .copy { flex: 1; }
+    .mascot-stage { display: none; }
+    .form-side { padding: 26px 24px 30px; }
+  }
+  @media (max-width: 480px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .col-2 { grid-column: span 1; }
+    .form-title { font-size: 27px; }
+  }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/_ds_bundle.js"></script>
+  <script src="egypt-locations.js"></script>
+
+  <script>
+    const { Button } = window.DesignSystem_663a1e;
+    const e = React.createElement;
+    const { useState } = React;
+    const GOVS = Object.keys(window.EG_LOCATIONS);
+
+    function Field({ label, error, children }) {
+      return e('div', { className: 'field' },
+        label && e('label', { className: 'field-label' }, label),
+        children,
+        error && e('span', { className: 'field-err' }, error)
+      );
+    }
+
+    function App() {
+      const [f, setF] = useState({ name:'', gender:'', phone:'', parentPhone:'', gov:'', markaz:'', pass:'' });
+      const [errs, setErrs] = useState({});
+      const [showPass, setShowPass] = useState(false);
+      const [done, setDone] = useState(false);
+      const set = (k, v) => setF(s => ({ ...s, [k]: v }));
+
+      const markazes = f.gov ? (window.EG_LOCATIONS[f.gov] || []) : [];
+
+      function validate() {
+        const er = {};
+        if (f.name.trim().split(/\s+/).filter(Boolean).length < 4) er.name = 'اكتب اسمك رباعي (٤ مقاطع)';
+        if (!f.gender) er.gender = 'اختار النوع';
+        if (!/^01[0-9]{9}$/.test(f.phone)) er.phone = 'رقم هاتف غير صحيح (١١ رقم)';
+        if (!/^01[0-9]{9}$/.test(f.parentPhone)) er.parentPhone = 'رقم هاتف غير صحيح (١١ رقم)';
+        if (!f.gov) er.gov = 'اختار المحافظة';
+        if (!f.markaz) er.markaz = 'اختار المركز';
+        if (f.pass.length < 6) er.pass = 'كلمة السر ٦ أحرف على الأقل';
+        setErrs(er);
+        return Object.keys(er).length === 0;
+      }
+      function submit(ev) { ev.preventDefault(); if (validate()) setDone(true); }
+
+      const firstName = (f.name.trim().split(/\s+/)[0]) || '';
+
+      // ---- Success state ----
+      const formBody = done
+        ? e('div', { className: 'success' },
+            e('div', { className: 'burst' }, '🎉'),
+            e('h2', null, 'تم إنشاء حسابك!'),
+            e('p', null, 'أهلاً بيك يا ' + firstName + ' في يوركا — مغامرتك بتبدأ دلوقتي.'),
+            e(Button, { variant: 'primary', size: 'lg', block: true, onClick: () => { window.location.href = 'Yurka Login.html'; } }, 'يلا نبدأ ←')
+          )
+        : e('form', { onSubmit: submit, noValidate: true },
+            e('div', { className: 'form-grid' },
+              // الاسم رباعي
+              e('div', { className: 'col-2' },
+                e(Field, { label: 'الاسم رباعي', error: errs.name },
+                  e('div', { className: 'field-box' + (errs.name ? ' invalid' : '') },
+                    e('span', { className: 'field-ic' }, '🧑‍🎓'),
+                    e('input', { type: 'text', placeholder: 'الاسم الأول واسم الأب والجد والعائلة',
+                      value: f.name, onChange: ev => set('name', ev.target.value) })
+                  )
+                )
+              ),
+              // الجنس
+              e('div', { className: 'col-2' },
+                e(Field, { label: 'النوع', error: errs.gender },
+                  e('div', { className: 'gender-row' },
+                    e('div', { className: 'gender-pill' + (f.gender==='ذكر'?' active':'') + (errs.gender?' invalid':''),
+                      onClick: () => set('gender','ذكر') }, e('span',{className:'g-ic'},'👦'), 'ذكر'),
+                    e('div', { className: 'gender-pill' + (f.gender==='أنثى'?' active':'') + (errs.gender?' invalid':''),
+                      onClick: () => set('gender','أنثى') }, e('span',{className:'g-ic'},'👧'), 'أنثى')
+                  )
+                )
+              ),
+              // رقم الهاتف
+              e(Field, { label: 'رقم الهاتف', error: errs.phone },
+                e('div', { className: 'field-box' + (errs.phone ? ' invalid' : '') },
+                  e('span', { className: 'field-ic' }, '📱'),
+                  e('input', { type: 'tel', inputMode: 'numeric', placeholder: '01xxxxxxxxx', dir: 'ltr',
+                    value: f.phone, onChange: ev => set('phone', ev.target.value.replace(/\D/g,'')), maxLength: 11 })
+                )
+              ),
+              // رقم هاتف ولي الأمر
+              e(Field, { label: 'رقم هاتف ولي الأمر', error: errs.parentPhone },
+                e('div', { className: 'field-box' + (errs.parentPhone ? ' invalid' : '') },
+                  e('span', { className: 'field-ic' }, '👨‍👩‍👦'),
+                  e('input', { type: 'tel', inputMode: 'numeric', placeholder: '01xxxxxxxxx', dir: 'ltr',
+                    value: f.parentPhone, onChange: ev => set('parentPhone', ev.target.value.replace(/\D/g,'')), maxLength: 11 })
+                )
+              ),
+              // المحافظة
+              e(Field, { label: 'المحافظة', error: errs.gov },
+                e('div', { className: 'field-box' + (errs.gov ? ' invalid' : '') },
+                  e('span', { className: 'field-ic' }, '📍'),
+                  e('select', { value: f.gov, onChange: ev => setF(s => ({ ...s, gov: ev.target.value, markaz: '' })) },
+                    e('option', { value: '' }, 'اختار المحافظة'),
+                    GOVS.map(g => e('option', { key: g, value: g }, g))
+                  ),
+                  e('span', { className: 'chev' }, '▼')
+                )
+              ),
+              // المركز
+              e(Field, { label: 'المركز', error: errs.markaz },
+                e('div', { className: 'field-box' + (errs.markaz ? ' invalid' : '') },
+                  e('span', { className: 'field-ic' }, '🏙️'),
+                  e('select', { value: f.markaz, disabled: !f.gov, onChange: ev => set('markaz', ev.target.value) },
+                    e('option', { value: '' }, f.gov ? 'اختار المركز' : 'اختار المحافظة أولاً'),
+                    markazes.map(m => e('option', { key: m, value: m }, m))
+                  ),
+                  e('span', { className: 'chev' }, '▼')
+                )
+              ),
+              // كلمة السر
+              e('div', { className: 'col-2' },
+                e(Field, { label: 'كلمة السر', error: errs.pass },
+                  e('div', { className: 'field-box' + (errs.pass ? ' invalid' : '') },
+                    e('span', { className: 'field-ic' }, '🔒'),
+                    e('input', { type: showPass ? 'text' : 'password', placeholder: '••••••••',
+                      value: f.pass, onChange: ev => set('pass', ev.target.value) }),
+                    e('button', { type: 'button', className: 'eye', onClick: () => setShowPass(p => !p),
+                      'aria-label': 'إظهار كلمة السر' }, showPass ? '🙈' : '👁️')
+                  )
+                )
+              )
+            ),
+            e('div', { className: 'submit-row' },
+              e(Button, { variant: 'primary', size: 'lg', block: true, type: 'submit' }, 'إنشاء الحساب 🚀')
+            ),
+            e('p', { className: 'login-link' }, 'عندك حساب بالفعل؟ ',
+              e('a', { href: 'Yurka Login.html' }, 'تسجيل دخول'))
+          );
+
+      return e('div', { className: 'page' },
+        // header
+        e('header', { className: 'topbar' },
+          e('div', { className: 'topbar-inner' },
+            e('a', { className: 'logo', href: 'Yurka Login.html' },
+              e('img', { className: 'logo-mark', src: 'assets/yurka-mark-tight.svg', alt: '' }),
+              e('img', { className: 'logo-word', src: 'assets/yurka-wordmark.svg', alt: 'Yurka' })
+            )
+          ),
+          e('svg', { className: 'wave-bottom', viewBox: '0 0 1440 26', preserveAspectRatio: 'none' },
+            e('path', { d: 'M0,0 L1440,0 L1440,12 C1200,2 960,2 720,14 C480,26 240,26 0,14 Z' })
+          )
+        ),
+        // body
+        e('div', { className: 'signup-wrap' },
+          e('span', { className: 'blob', style: { width: 14, height: 14, top: '14%', right: '10%', background: 'var(--yk-pink)' } }),
+          e('span', { className: 'blob', style: { width: 10, height: 10, bottom: '12%', left: '12%', background: 'var(--yk-sunshine-400)' } }),
+          e('div', { className: 'card' },
+            // form side
+            e('div', { className: 'form-side' },
+              e('div', { className: 'form-head' },
+                e('span', { className: 'form-eyebrow' }, 'انضم لـ يوركا'),
+                e('h2', { className: 'form-title' }, done ? 'أهلاً بيك!' : 'إنشاء حساب جديد'),
+                !done && e('p', { className: 'form-sub' }, 'املأ بياناتك وابدأ مغامرتك التعليمية 🎯')
+              ),
+              formBody
+            ),
+            // mascot side
+            e('div', { className: 'mascot-side' },
+              e('div', { className: 'floaters' },
+                e('div', { className: 'float coin', style: { top: '8%', left: '8%', animationDelay: '-0.2s' } }, 'A'),
+                e('div', { className: 'float coin', style: { top: '40%', right: '7%', animationDelay: '-1.6s' } }, 'B'),
+                e('div', { className: 'float coin', style: { bottom: '16%', left: '6%', animationDelay: '-3.1s' } }, 'C'),
+                e('div', { className: 'float', style: { top: '6%', right: '14%', animationDelay: '-0.9s' } }, '📖'),
+                e('div', { className: 'float', style: { top: '30%', left: '4%', animationDelay: '-2.4s', fontSize: '22px' } }, '📚'),
+                e('div', { className: 'float', style: { bottom: '8%', right: '10%', animationDelay: '-1.2s' } }, '✏️'),
+                e('div', { className: 'float', style: { top: '52%', left: '9%', animationDelay: '-3.6s', fontSize: '23px' } }, '📝'),
+                e('div', { className: 'float', style: { bottom: '30%', right: '6%', animationDelay: '-2.0s', fontSize: '22px' } }, '💬'),
+                e('div', { className: 'float', style: { top: '18%', right: '4%', animationDelay: '-4.2s', fontSize: '22px' } }, '🔤'),
+                e('div', { className: 'float', style: { bottom: '4%', left: '14%', animationDelay: '-1.9s', fontSize: '21px' } }, '🖊️'),
+                e('div', { className: 'float', style: { top: '68%', right: '13%', animationDelay: '-0.6s', fontSize: '21px' } }, '🎓')
+              ),
+              e('div', { className: 'copy' },
+                e('h2', null, 'انضم لمغامرة ', e('span', { className: 'hi' }, 'يوركا!')),
+                e('p', null, 'اتعلّم وأنت بتلعب، واجمع نقاطك كل يوم.'),
+                e('div', { className: 'perks' },
+                  e('div', { className: 'perk' }, e('span',{className:'p-ic'},'⚡'), 'اجمع نقاط الخبرة (XP)'),
+                  e('div', { className: 'perk' }, e('span',{className:'p-ic'},'🔥'), 'حافظ على الستريك'),
+                  e('div', { className: 'perk' }, e('span',{className:'p-ic'},'🏅'), 'اطلع رانك جديد')
+                )
+              ),
+              e('div', { className: 'mascot-stage' },
+                e('img', { src: 'assets/yuki-hero-lookup.png', alt: 'شخصية يوركا' })
+              )
+            )
+          )
+        )
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(e(App));
+  </script>
+</body>
+</html>
+
+<style id="__om-edit-overrides">
+#root .card :is(img,video) { width: 298px !important }
+#root .card :is(img,video) { width: 238px !important }
+#root .card :is(img,video) { object-fit: fill !important }
+#root .card :is(img,video) { object-fit: cover !important }
+#root .card :is(img,video) { height: 417px !important }
+#root .card :is(img,video) { height: 568px !important }
+#root .card :is(img,video) { height: 372px !important }
+</style>

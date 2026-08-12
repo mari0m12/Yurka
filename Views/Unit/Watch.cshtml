@@ -1,0 +1,494 @@
+@model EduPlatform.ViewModels.LessonWatchViewModel
+@{
+    var lesson = Model.Lesson;
+    ViewData["Title"] = lesson.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var firstExam = lesson.Exams?.FirstOrDefault(e => e.IsActive);
+    var answeredIds = Model.Responses.Select(r => r.VideoQuestionId).ToHashSet();
+    var questionsPayload = Model.InteractiveQuestions.Select(q => new
+    {
+        id = q.Id,
+        text = q.Text,
+        triggerSecond = q.TriggerSecond,
+        points = q.Points,
+        answered = answeredIds.Contains(q.Id),
+        answers = q.Answers.OrderBy(a => a.SortOrder).Select(a => new { id = a.Id, text = a.Text })
+    });
+}
+
+<div class="yk-watch-shell">
+    <form id="videoQuestionTokenForm" style="display:none;">@Html.AntiForgeryToken()</form>
+
+    <div class="lesson-layout" style="color:white;">
+        <div>
+            <div class="video-container" style="box-shadow:0 24px 60px rgba(0,0,0,.35); position:relative;">
+                <div id="lessonPlayer"></div>
+
+                <button id="questionLaunchBtn" type="button" class="video-question-launch" hidden>
+                    <i class="fas fa-bolt"></i>
+                    سؤال ظهر لك
+                </button>
+            </div>
+
+            <div class="lesson-info">
+                <div class="breadcrumb" style="color:rgba(255,255,255,.65);">
+                    <a href="/" style="color:var(--primary)">الرئيسية</a>
+                    <i class="fas fa-chevron-left"></i>
+                    <a href="/Unit/Detail/@lesson.UnitId" style="color:var(--primary)">@lesson.Unit.Title</a>
+                    <i class="fas fa-chevron-left"></i>
+                    <span>@lesson.Title</span>
+                </div>
+                <h1 class="lesson-title" style="color:white;">@lesson.Title</h1>
+                <div class="lesson-meta" style="color:rgba(255,255,255,.68);">
+                    @if (lesson.DurationMinutes > 0)
+                    {
+                        <span><i class="fas fa-clock"></i> @lesson.DurationMinutes دقيقة</span>
+                    }
+                    <span><i class="fas fa-calendar"></i> @lesson.CreatedAt.ToString("dd/MM/yyyy")</span>
+                </div>
+                @if (!string.IsNullOrEmpty(lesson.Description))
+                {
+                    <div style="margin-top:16px; background:rgba(255,255,255,.08); border-radius:var(--radius); padding:20px; border:1px solid rgba(255,255,255,.14);">
+                        <h3 style="font-size:15px; font-weight:800; margin-bottom:8px; color:var(--primary);">وصف الدرس</h3>
+                        <p style="color:rgba(255,255,255,.78); font-size:14px; line-height:1.8;">@lesson.Description</p>
+                    </div>
+                }
+
+                <div class="yk-question-panel">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;">
+                        <div>
+                            <strong style="color:var(--dark); font-size:18px;">أسئلة الفيديو التفاعلية</strong>
+                            <div style="color:var(--text-muted); font-size:13px;">لما توصل لوقت السؤال هيظهر زر فوق الفيديو. بعد 3 إجابات غلط، أي إجابات صح بعدها تتسجل بدون نقاط.</div>
+                        </div>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <span class="badge badge-primary"><i class="fas fa-bolt"></i> <span id="videoPoints">@Model.AwardedPoints</span> نقطة</span>
+                            <span class="badge badge-danger"><i class="fas fa-times"></i> <span id="videoWrongs">@Model.WrongAnswers</span>/@Model.MaxWrongAnswers</span>
+                        </div>
+                    </div>
+
+                    @if (Model.InteractiveQuestions.Any())
+                    {
+                        <div class="video-question-timeline">
+                            @foreach (var q in Model.InteractiveQuestions)
+                            {
+                                var minute = q.TriggerSecond / 60;
+                                var second = q.TriggerSecond % 60;
+                                var done = answeredIds.Contains(q.Id);
+                                <div class="video-question-chip @(done ? "is-done" : "")" data-question-chip="@q.Id">
+                                    <i class="fas @(done ? "fa-check-circle" : "fa-clock")"></i>
+                                    <span>@minute:@second.ToString("00")</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="color:var(--text-muted);">لا توجد أسئلة فيديو مضافة لهذا الدرس حتى الآن.</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-sidebar">
+            <div class="lessons-list">
+                <div class="lessons-list-header">
+                    <i class="fas fa-list"></i> محتوى الوحدة
+                </div>
+                <a href="/Unit/Detail/@lesson.UnitId" class="lessons-list-item" style="background:#f8fafc; color:var(--dark); font-weight:800; font-size:13px;">
+                    <i class="fas fa-arrow-right"></i>
+                    العودة لقائمة الوحدة
+                </a>
+            </div>
+
+            @if (lesson.Exams?.Any(e => e.IsActive) == true)
+            {
+                <div style="background:white; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; margin-top:16px;">
+                    <div style="padding:14px 18px; background:var(--primary); color:var(--dark); font-weight:800; font-size:14px;">
+                        <i class="fas fa-tasks"></i> امتحانات هذا الدرس
+                    </div>
+                    @foreach (var exam in lesson.Exams.Where(e => e.IsActive))
+                    {
+                        <a href="/Exam/Start/@exam.Id" class="lessons-list-item">
+                            <div class="lesson-num" style="background:var(--accent); color:white; font-size:16px; width:34px; height:34px;">
+                                <i class="fas fa-pencil-alt"></i>
+                            </div>
+                            <div>
+                                <div class="lesson-item-title">@exam.Title</div>
+                                <div class="lesson-item-dur"><i class="fas fa-clock"></i> @exam.DurationMinutes دقيقة</div>
+                            </div>
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="videoQuestionModal" class="video-question-modal" hidden>
+    <div class="video-question-card">
+        <button id="closeQuestionModal" type="button" class="video-question-close" aria-label="إغلاق">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="video-question-kicker"><i class="fas fa-bolt"></i> سؤال تفاعلي</div>
+        <h2 id="videoQuestionText"></h2>
+        <div id="videoQuestionAnswers" class="video-question-answers"></div>
+        <div id="videoQuestionFeedback" class="video-question-feedback"></div>
+    </div>
+</div>
+
+<div id="videoQuestionEffects" class="video-question-effects" aria-hidden="true"></div>
+
+@section Scripts {
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        const videoQuestions = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(questionsPayload));
+        const videoId = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(lesson.YoutubeVideoId));
+        const submitUrl = '@Url.Action("SubmitVideoQuestion", "Unit")';
+        const token = document.querySelector('#videoQuestionTokenForm input[name="__RequestVerificationToken"]').value;
+
+        let player;
+        let activeQuestion = null;
+        const pendingQuestions = videoQuestions.filter(q => !q.answered);
+        const launchBtn = document.getElementById('questionLaunchBtn');
+        const modal = document.getElementById('videoQuestionModal');
+        const questionText = document.getElementById('videoQuestionText');
+        const answersBox = document.getElementById('videoQuestionAnswers');
+        const feedback = document.getElementById('videoQuestionFeedback');
+        const pointsEl = document.getElementById('videoPoints');
+        const wrongsEl = document.getElementById('videoWrongs');
+        const effects = document.getElementById('videoQuestionEffects');
+
+        window.onYouTubeIframeAPIReady = () => {
+            player = new YT.Player('lessonPlayer', {
+                videoId,
+                width: '100%',
+                height: '100%',
+                playerVars: { rel: 0, modestbranding: 1, autoplay: 1, enablejsapi: 1 },
+                events: { onReady: startQuestionWatcher }
+            });
+        };
+
+        function startQuestionWatcher() {
+            setInterval(() => {
+                if (!player || typeof player.getCurrentTime !== 'function') return;
+                const current = Math.floor(player.getCurrentTime());
+                const next = pendingQuestions.find(q => !q.revealed && current >= q.triggerSecond);
+                if (!next) return;
+                next.revealed = true;
+                activeQuestion = next;
+                launchBtn.hidden = false;
+                launchBtn.classList.add('is-pulsing');
+                playTone('notice');
+            }, 800);
+        }
+
+        launchBtn.addEventListener('click', () => {
+            if (!activeQuestion) return;
+            if (player?.pauseVideo) player.pauseVideo();
+            openQuestion(activeQuestion);
+        });
+
+        document.getElementById('closeQuestionModal').addEventListener('click', () => {
+            modal.hidden = true;
+            if (player?.playVideo) player.playVideo();
+        });
+
+        function openQuestion(question) {
+            questionText.textContent = question.text;
+            feedback.textContent = '';
+            feedback.className = 'video-question-feedback';
+            answersBox.innerHTML = '';
+            question.answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'video-question-answer';
+                button.textContent = answer.text;
+                button.addEventListener('click', () => submitAnswer(question, answer.id, button));
+                answersBox.appendChild(button);
+            });
+            modal.hidden = false;
+        }
+
+        async function submitAnswer(question, answerId, button) {
+            if (answersBox.classList.contains('is-locked')) return;
+            answersBox.classList.add('is-locked');
+
+            const body = new URLSearchParams();
+            body.set('questionId', question.id);
+            body.set('answerId', answerId);
+
+            const response = await fetch(submitUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'RequestVerificationToken': token
+                },
+                body
+            });
+
+            if (!response.ok) {
+                feedback.textContent = 'حصل خطأ أثناء حفظ الإجابة. حاول مرة تانية.';
+                feedback.classList.add('is-wrong');
+                answersBox.classList.remove('is-locked');
+                playTone('wrong');
+                return;
+            }
+
+            const result = await response.json();
+            pointsEl.textContent = result.totalPoints;
+            wrongsEl.textContent = result.wrongAnswers;
+            button.classList.add(result.isCorrect ? 'is-correct' : 'is-wrong');
+            document.querySelector(`[data-question-chip="${question.id}"]`)?.classList.add('is-done');
+
+            if (result.isCorrect && result.awardedPoints > 0) {
+                feedback.textContent = `إجابة صح! +${result.awardedPoints} نقطة`;
+                feedback.classList.add('is-correct');
+                playTone('correct');
+                burstBalloons('correct');
+            } else if (result.isCorrect) {
+                feedback.textContent = 'إجابة صح، لكن النقاط اتقفلت بعد 3 إجابات غلط.';
+                feedback.classList.add('is-warn');
+                playTone('wrong');
+                burstBalloons('warn');
+            } else {
+                feedback.textContent = result.wrongAnswers >= result.maxWrongAnswers
+                    ? 'إجابة غلط. وصلت لـ 3 غلطات، النقاط الجديدة مش هتتحسب في الدرس ده.'
+                    : 'إجابة غلط. ركز وكمل الفيديو.';
+                feedback.classList.add('is-wrong');
+                playTone('wrong');
+                burstBalloons('wrong');
+            }
+
+            question.answered = true;
+            launchBtn.hidden = true;
+            launchBtn.classList.remove('is-pulsing');
+            setTimeout(() => {
+                modal.hidden = true;
+                answersBox.classList.remove('is-locked');
+                if (player?.playVideo) player.playVideo();
+            }, 1800);
+        }
+
+        function playTone(type) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const gain = ctx.createGain();
+            gain.connect(ctx.destination);
+            gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.45);
+
+            const notes = type === 'correct' ? [523, 659, 784] : type === 'notice' ? [740, 880] : [220, 164];
+            notes.forEach((freq, index) => {
+                const osc = ctx.createOscillator();
+                osc.type = type === 'wrong' ? 'sawtooth' : 'sine';
+                osc.frequency.value = freq;
+                osc.connect(gain);
+                osc.start(ctx.currentTime + index * 0.09);
+                osc.stop(ctx.currentTime + index * 0.09 + 0.16);
+            });
+        }
+
+        function burstBalloons(type) {
+            effects.innerHTML = '';
+            effects.className = `video-question-effects is-${type}`;
+            for (let i = 0; i < 18; i++) {
+                const item = document.createElement('span');
+                item.style.setProperty('--x', `${Math.random() * 100}vw`);
+                item.style.setProperty('--delay', `${Math.random() * 0.35}s`);
+                item.style.setProperty('--size', `${12 + Math.random() * 22}px`);
+                effects.appendChild(item);
+            }
+            setTimeout(() => effects.innerHTML = '', 1600);
+        }
+    </script>
+
+    <style>
+        #lessonPlayer, #lessonPlayer iframe {
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 16 / 9;
+            display: block;
+        }
+
+        .video-question-launch {
+            position: absolute;
+            right: 18px;
+            bottom: 18px;
+            z-index: 3;
+            border: 0;
+            border-radius: 999px;
+            padding: 13px 18px;
+            background: var(--primary);
+            color: var(--dark);
+            font-weight: 900;
+            box-shadow: 0 14px 36px rgba(0,0,0,.28);
+            cursor: pointer;
+        }
+
+        .video-question-launch.is-pulsing {
+            animation: questionPulse 1s infinite;
+        }
+
+        .video-question-timeline {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .video-question-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .video-question-chip.is-done {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #86efac;
+        }
+
+        .video-question-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: grid;
+            place-items: center;
+            padding: 18px;
+            background: rgba(15, 23, 42, .72);
+        }
+
+        .video-question-modal[hidden] {
+            display: none;
+        }
+
+        .video-question-card {
+            width: min(620px, 100%);
+            background: white;
+            color: var(--dark);
+            border-radius: 8px;
+            padding: 24px;
+            position: relative;
+            box-shadow: 0 30px 90px rgba(0,0,0,.35);
+            animation: questionPop .22s ease-out;
+        }
+
+        .video-question-close {
+            position: absolute;
+            left: 14px;
+            top: 14px;
+            border: 0;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            cursor: pointer;
+        }
+
+        .video-question-kicker {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(250, 204, 21, .2);
+            color: #854d0e;
+            font-weight: 900;
+            margin-bottom: 14px;
+        }
+
+        #videoQuestionText {
+            font-size: 24px;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .video-question-answers {
+            display: grid;
+            gap: 10px;
+        }
+
+        .video-question-answer {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            color: var(--dark);
+            padding: 14px 16px;
+            text-align: right;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .video-question-answer:hover {
+            border-color: var(--primary);
+            background: #fffbea;
+        }
+
+        .video-question-answer.is-correct {
+            background: #dcfce7;
+            border-color: #22c55e;
+        }
+
+        .video-question-answer.is-wrong {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .video-question-feedback {
+            margin-top: 14px;
+            font-weight: 900;
+            min-height: 26px;
+        }
+
+        .video-question-feedback.is-correct { color: var(--success); }
+        .video-question-feedback.is-wrong { color: var(--danger); }
+        .video-question-feedback.is-warn { color: #a16207; }
+
+        .video-question-effects {
+            position: fixed;
+            inset: 0;
+            z-index: 1100;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .video-question-effects span {
+            position: absolute;
+            bottom: -40px;
+            left: var(--x);
+            width: var(--size);
+            height: calc(var(--size) * 1.25);
+            border-radius: 50% 50% 45% 45%;
+            background: #22c55e;
+            animation: balloonRise 1.45s ease-out var(--delay) forwards;
+        }
+
+        .video-question-effects.is-wrong span { background: #ef4444; }
+        .video-question-effects.is-warn span { background: #f59e0b; }
+
+        @@keyframes questionPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        @@keyframes questionPop {
+            from { transform: translateY(14px) scale(.98); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        @@keyframes balloonRise {
+            to {
+                transform: translateY(-105vh) rotate(22deg);
+                opacity: 0;
+            }
+        }
+    </style>
+}

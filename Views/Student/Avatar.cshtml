@@ -1,0 +1,46 @@
+@model EduPlatform.Models.ApplicationUser
+@{
+    ViewData["Title"] = "اختيار صورة البروفايل";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var avatars = Enumerable.Range(1, 12).Select(i => $"/yurka/assets/avatars/avatar-{i:00}.png").ToList();
+    var selected = string.IsNullOrWhiteSpace(Model.ProfileImage) ? avatars.First() : Model.ProfileImage;
+}
+
+<div class="section-container" style="padding-top:40px; padding-bottom:70px;">
+    <div class="section-header">
+        <span class="section-tag">شخصيتك في Yurka</span>
+        <h1 class="section-title">اختار <span>صورة البروفايل</span></h1>
+        <p class="section-desc">الصورة المختارة هتظهر في بروفايلك ولوحات المتابعة.</p>
+    </div>
+
+    <form asp-controller="Student" asp-action="Avatar" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="profileImage" id="profileImage" value="@selected" />
+
+        <div class="yk-avatar-grid">
+            @foreach (var avatar in avatars)
+            {
+                <button type="button" class="yk-avatar-choice @(avatar == selected ? "selected" : "")" data-avatar="@avatar">
+                    <img src="@avatar" alt="" />
+                </button>
+            }
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:12px; margin-top:30px;">
+            <a href="/Student/Dashboard" class="btn btn-outline">رجوع</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ الصورة</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.yk-avatar-choice').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.yk-avatar-choice').forEach(x => x.classList.remove('selected'));
+                button.classList.add('selected');
+                document.getElementById('profileImage').value = button.dataset.avatar;
+            });
+        });
+    </script>
+}

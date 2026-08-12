@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختر صفك · يوركا</title>
+
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/colors.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/typography.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/base.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/styles.css">
+
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    min-height: 100vh;
+    font-family: 'Omnes', system-ui, sans-serif;
+    color: var(--yk-deepsea);
+    background: var(--yk-warmgray);
+  }
+
+  /* ===== Stage ===== */
+  .stage {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--yk-warmgray);
+  }
+  /* ===== Top bar ===== */
+  .topbar {
+    position: relative;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    padding: 22px clamp(20px, 5vw, 56px);
+  }
+  .logo { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; direction: ltr; }
+  .logo-mark { height: 32px; width: auto; display: block; filter: drop-shadow(0 4px 10px rgba(10,37,64,0.15)); }
+  .logo-word { height: 20px; width: auto; display: block; }
+  .back {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 15px; font-weight: 700;
+    color: var(--yk-ink-700);
+    text-decoration: none;
+    background: rgba(255,255,255,0.75);
+    border: 1px solid var(--border-subtle);
+    padding: 9px 16px 9px 18px;
+    border-radius: var(--radius-pill);
+    box-shadow: 0 4px 12px rgba(10,37,64,0.06);
+    -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+    transition: background var(--dur-fast), border-color var(--dur-fast);
+  }
+  .back:hover { background: #fff; border-color: var(--border-default); }
+  .back .chev { font-size: 17px; opacity: 0.7; }
+
+  /* ===== Scene ===== */
+  .scene {
+    position: relative;
+    z-index: 5;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 1240px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px clamp(20px, 5vw, 56px) 48px;
+  }
+
+  .head { text-align: center; margin: 6px 0 34px; max-width: 700px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-weight: 800; font-size: 12px;
+    letter-spacing: 0.10em;
+    color: var(--yk-teal-600);
+    background: rgba(0,180,219,0.12);
+    border: 1px solid rgba(0,180,219,0.30);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    margin-bottom: 16px;
+  }
+  .head h1 {
+    font-family: var(--font-display), 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: clamp(34px, 5vw, 52px);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px;
+    color: var(--yk-deepsea);
+  }
+  .head h1 b { color: var(--yk-teal); }
+  .head p {
+    font-size: clamp(15px, 1.6vw, 17.5px);
+    font-weight: 500;
+    color: var(--yk-ink-600);
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  /* ===== Cards row ===== */
+  .cards {
+    position: relative;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(16px, 2vw, 26px);
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: 30px;
+    padding: 30px 28px 28px;
+    cursor: pointer;
+    text-align: right;
+    background: linear-gradient(170deg, rgba(255,255,255,0.78), rgba(255,255,255,0.52));
+    border: 1px solid rgba(255,255,255,0.85);
+    -webkit-backdrop-filter: blur(26px) saturate(140%);
+            backdrop-filter: blur(26px) saturate(140%);
+    box-shadow:
+      0 26px 60px rgba(10,37,64,0.16),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+    transition: transform var(--dur-base) var(--ease-out),
+                box-shadow var(--dur-base) var(--ease-out),
+                border-color var(--dur-base) var(--ease-out);
+  }
+  .card::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(120% 80% at 50% 0%, var(--tint, rgba(0,180,219,0.16)), rgba(0,0,0,0) 60%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .card:hover { transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 38px 80px rgba(10,37,64,0.22), 0 0 0 1px var(--accent), 0 0 50px -10px var(--accent), inset 0 1px 0 rgba(255,255,255,0.9); }
+  .card:hover::before { opacity: 1; }
+
+  .card.selected {
+    transform: translateY(-8px);
+    border-color: var(--accent);
+    box-shadow:
+      0 42px 90px rgba(10,37,64,0.26),
+      0 0 0 2px var(--accent),
+      0 0 60px -8px var(--accent),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+  .card.selected::before { opacity: 1; }
+
+  .badge-grade {
+    display: inline-flex; align-items: center; gap: 8px;
+    align-self: flex-start;
+    font-weight: 800; font-size: 13px;
+    color: #fff;
+    background: var(--accent);
+    padding: 6px 13px;
+    border-radius: var(--radius-pill);
+    margin-bottom: 18px;
+    box-shadow: 0 6px 16px -4px var(--accent);
+  }
+  .level-num {
+    font-family: var(--font-display), 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--yk-ink-500);
+    margin-bottom: 2px;
+  }
+  .card h2 {
+    font-family: var(--font-display), 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: 29px;
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+    margin: 0 0 10px;
+    color: var(--yk-deepsea);
+  }
+  .card .desc {
+    font-size: 14.5px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--yk-ink-600);
+    margin: 0 0 18px;
+    min-height: 44px;
+  }
+
+  .stats {
+    display: flex; gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat {
+    flex: 1;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 11px 12px;
+    text-align: center;
+  }
+  .stat .v {
+    font-family: var(--font-display), 'Baloo 2', sans-serif;
+    font-weight: 800; font-size: 21px;
+    color: var(--yk-deepsea); line-height: 1;
+  }
+  .stat .l {
+    font-size: 11.5px; font-weight: 600;
+    color: var(--yk-ink-500);
+    margin-top: 5px;
+  }
+
+  .feats { list-style: none; margin: 0 0 24px; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .feats li {
+    display: flex; align-items: center; gap: 11px;
+    font-size: 14.5px; font-weight: 600;
+    color: var(--yk-ink-800);
+  }
+  .feats .ic {
+    flex: 0 0 auto;
+    width: 30px; height: 30px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .choose {
+    margin-top: auto;
+    width: 100%;
+    font-family: var(--font-display), 'Baloo 2', sans-serif;
+    font-weight: 800; font-size: 17px;
+    color: var(--yk-deepsea);
+    background: rgba(255,255,255,0.85);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-pill);
+    padding: 15px 22px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    transition: transform var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out),
+                background var(--dur-base), color var(--dur-base);
+  }
+  .card:hover .choose { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 6px 0 var(--accent-deep); }
+  .card.selected .choose {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 6px 0 var(--accent-deep);
+  }
+  .choose:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--accent-deep) !important; }
+  .choose .label-default { display: inline; }
+  .choose .label-picked { display: none; }
+  .card.selected .choose .label-default { display: none; }
+  .card.selected .choose .label-picked { display: inline-flex; align-items: center; gap: 8px; }
+
+  /* Sunshine accent needs dark text for contrast */
+  .card[data-grade="third"] .badge-grade,
+  .card[data-grade="third"] .check { color: var(--yk-deepsea); }
+  .card[data-grade="third"]:hover .choose,
+  .card[data-grade="third"].selected .choose { color: var(--yk-deepsea); }
+
+  /* selected check badge */
+  .check {
+    position: absolute;
+    top: 18px; left: 18px;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff; font-size: 15px; font-weight: 900;
+    display: inline-flex; align-items: center; justify-content: center;
+    opacity: 0; transform: scale(0.5);
+    box-shadow: 0 6px 16px -4px var(--accent);
+    transition: all var(--dur-base) var(--ease-bounce);
+  }
+  .card.selected .check { opacity: 1; transform: scale(1); }
+
+  /* ===== Background mascot (Mira close-up) ===== */
+  .bg-mascot {
+    position: absolute;
+    z-index: 0;
+    bottom: -60px;
+    right: -120px;
+    width: 720px;
+    height: auto;
+    pointer-events: none;
+    opacity: 0.28;
+    -webkit-mask-image: radial-gradient(70% 70% at 45% 45%, #000 45%, transparent 78%);
+            mask-image: radial-gradient(70% 70% at 45% 45%, #000 45%, transparent 78%);
+    filter: saturate(108%);
+  }
+
+  /* ===== Footer hint ===== */
+  .hint {
+    position: relative; z-index: 6;
+    margin-top: 30px;
+    text-align: center;
+    font-size: 14px; font-weight: 500;
+    color: var(--yk-ink-500);
+  }
+  .hint b { color: var(--yk-sunshine-600); font-weight: 800; }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 1180px) {
+    .bg-mascot { width: 560px; right: -160px; }
+  }
+  @media (max-width: 940px) {
+    .cards { grid-template-columns: 1fr; max-width: 460px; }
+    .bg-mascot { display: none; }
+    .card .desc { min-height: 0; }
+  }
+  @media (max-width: 520px) {
+    .topbar { padding: 16px 20px; }
+    .card { padding: 26px 22px 24px; border-radius: 24px; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <img class="bg-mascot" src="assets/mira-face-closeup.png" alt="" aria-hidden="true">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <a class="logo" href="Yurka landing Page.html">
+        <img class="logo-mark" src="assets/yurka-mark-tight.svg" alt="">
+        <img class="logo-word" src="assets/yurka-wordmark-dark.svg" alt="Yurka">
+      </a>
+      <a class="back" href="Yurka Sign In.html"><span class="chev" aria-hidden="true">›</span> رجوع</a>
+    </header>
+
+    <!-- Scene -->
+    <main class="scene">
+      <div class="head">
+        <span class="eyebrow">🔤 اللغة الإنجليزية</span>
+        <h1>اختر <b>صفك الدراسي</b></h1>
+        <p>كورس اللغة الإنجليزية لكل مراحل الإعدادي — اختر صفك وابدأ رحلتك .</p>
+      </div>
+
+      <section class="cards">
+        <!-- الصف الأول -->
+        <article class="card" data-grade="first"
+                 style="--accent: var(--yk-teal); --accent-deep: var(--yk-teal-600); --tint: rgba(0,180,219,0.22);">
+          <span class="check" aria-hidden="true">✓</span>
+          <span class="badge-grade">⚡ مستوى 1</span>
+          <div class="level-num">الصف الأول</div>
+          <h2>الصف الأول الإعدادي</h2>
+          <p class="desc">بداية المغامرة — أساسيات إنجليزي قوية تبني عليها كل اللي جاي.</p>
+          <div class="stats">
+            <div class="stat"><div class="v">8</div><div class="l">وحدات</div></div>
+            <div class="stat"><div class="v">96</div><div class="l">درس</div></div>
+            <div class="stat"><div class="v">1,800</div><div class="l">XP</div></div>
+          </div>
+          <button type="button" class="choose">
+            <span class="label-default">اختر هذا الصف</span>
+            <span class="label-picked">تم الاختيار <span aria-hidden="true">←</span></span>
+          </button>
+        </article>
+
+        <!-- الصف الثاني -->
+        <article class="card" data-grade="second"
+                 style="--accent: var(--yk-coral); --accent-deep: var(--yk-coral-600); --tint: rgba(255,107,71,0.22);">
+          <span class="check" aria-hidden="true">✓</span>
+          <span class="badge-grade">🔥 مستوى 2</span>
+          <div class="level-num">الصف الثاني</div>
+          <h2>الصف الثاني الإعدادي</h2>
+          <p class="desc">ترفع المستوى — جمل أطول وحوارات أعمق وثروة لغوية أوسع.</p>
+          <div class="stats">
+            <div class="stat"><div class="v">9</div><div class="l">وحدات</div></div>
+            <div class="stat"><div class="v">112</div><div class="l">درس</div></div>
+            <div class="stat"><div class="v">2,400</div><div class="l">XP</div></div>
+          </div>
+          <button type="button" class="choose">
+            <span class="label-default">اختر هذا الصف</span>
+            <span class="label-picked">تم الاختيار <span aria-hidden="true">←</span></span>
+          </button>
+        </article>
+
+        <!-- الصف الثالث -->
+        <article class="card" data-grade="third"
+                 style="--accent: var(--yk-sunshine); --accent-deep: var(--yk-sunshine-600); --tint: rgba(255,214,10,0.22);">
+          <span class="check" aria-hidden="true">✓</span>
+          <span class="badge-grade">🏅 مستوى 3</span>
+          <div class="level-num">الصف الثالث</div>
+          <h2>الصف الثالث الإعدادي</h2>
+          <p class="desc">سنة الحسم — إتقان كامل للإنجليزي واستعداد للشهادة الإعدادية بثقة.</p>
+          <div class="stats">
+            <div class="stat"><div class="v">10</div><div class="l">وحدات</div></div>
+            <div class="stat"><div class="v">128</div><div class="l">درس</div></div>
+            <div class="stat"><div class="v">3,000</div><div class="l">XP</div></div>
+          </div>
+          <button type="button" class="choose">
+            <span class="label-default">اختر هذا الصف</span>
+            <span class="label-picked">تم الاختيار <span aria-hidden="true">←</span></span>
+          </button>
+        </article>
+      </section>
+
+      <p class="hint">تقدر تغيّر صفك في أي وقت من <b>الإعدادات</b> 🎯</p>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
+      function select(card) {
+        cards.forEach(function (c) { c.classList.toggle('selected', c === card); });
+      }
+      cards.forEach(function (card) {
+        card.addEventListener('click', function () { select(card); });
+        var btn = card.querySelector('.choose');
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (card.classList.contains('selected')) {
+            window.location.href = 'Yurka landing Page.html';
+          } else {
+            select(card);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

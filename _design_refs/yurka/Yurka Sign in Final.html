@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسجيل الدخول · يوركا</title>
+
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/colors.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/typography.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/tokens/base.css">
+<link rel="stylesheet" href="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/styles.css">
+
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Omnes', system-ui, sans-serif;
+    color: var(--text-strong);
+    background: var(--yk-warmgray);
+  }
+
+  .page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    background: #F2F3F5;
+  }
+
+  /* decorative confetti dots */
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(0.2px);
+    opacity: 0.9;
+    pointer-events: none;
+  }
+
+  /* ---------- Header band ---------- */
+  .topbar {
+    position: relative;
+    z-index: 5;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .topbar-inner {
+    position: relative;
+    z-index: 1;
+    background: var(--yk-deepsea);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    padding: 10px 56px 8px;
+  }
+  .wave-bottom { display: block; width: 100%; height: 16px; margin-top: -1px; position: relative; z-index: 0; }
+  .wave-bottom path { fill: var(--yk-deepsea); }
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none;
+    direction: ltr;
+  }
+  .logo-mark { height: 30px; width: auto; display: block; }
+  .logo-word { height: 19px; width: auto; display: block; }
+  .top-link {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 14.5px; font-weight: 600;
+    color: rgba(255,255,255,0.78);
+    text-decoration: none;
+  }
+  .top-link b { color: var(--yk-sunshine-400); font-weight: 800; }
+  .top-link:hover b { text-decoration: underline; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;     /* form | mascots */
+    align-items: center;
+    gap: 24px;
+    max-width: 1180px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 12px 56px 28px;
+  }
+
+  /* RIGHT column (RTL first): the login card */
+  .panel { order: 2; justify-self: end; width: 100%; max-width: 460px; }
+
+  .login-card {
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 28px;
+    padding: 34px 32px 30px;
+    box-shadow: var(--shadow-lg);
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--yk-teal-600);
+    background: var(--yk-teal-50);
+    border: 1px solid var(--yk-teal-100);
+    padding: 7px 14px;
+    border-radius: var(--radius-pill);
+    margin-bottom: 16px;
+    white-space: nowrap;
+  }
+  .login-card h1 {
+    font-family: 'Omnes', sans-serif;
+    font-weight: 800;
+    font-size: 36px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+    color: var(--yk-deepsea);
+  }
+  .login-card .sub {
+    font-size: 15.5px;
+    font-weight: 500;
+    color: var(--yk-ink-700);
+    margin: 0 0 24px;
+  }
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 14px; font-weight: 700;
+    color: var(--yk-deepsea);
+    margin-bottom: 7px;
+  }
+  .control {
+    display: flex; align-items: center; gap: 10px;
+    background: #F7F8FA;
+    border: 2px solid var(--border-default);
+    border-radius: 16px;
+    padding: 13px 15px;
+    transition: border-color var(--dur-fast), box-shadow var(--dur-fast), background var(--dur-fast);
+  }
+  .control:focus-within {
+    border-color: var(--yk-teal);
+    background: #fff;
+    box-shadow: var(--focus-ring);
+  }
+  .control .lead { font-size: 17px; opacity: 0.85; flex: 0 0 auto; }
+  .control input {
+    flex: 1; min-width: 0;
+    border: none; outline: none; background: transparent;
+    font-family: 'Omnes', sans-serif;
+    font-size: 16px; font-weight: 500;
+    color: var(--yk-deepsea);
+  }
+  .control input::placeholder { color: var(--yk-ink-400, #9aa6b2); }
+  .eye {
+    flex: 0 0 auto;
+    background: none; border: none; cursor: pointer;
+    font-size: 17px; padding: 2px 4px; line-height: 1;
+    opacity: 0.55; transition: opacity var(--dur-fast);
+  }
+  .eye:hover { opacity: 1; }
+
+  /* row: remember + forgot */
+  .row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin: 4px 0 22px;
+  }
+  .remember {
+    display: inline-flex; align-items: center; gap: 9px;
+    cursor: pointer; user-select: none;
+    font-size: 14.5px; font-weight: 600;
+    color: var(--yk-deepsea);
+  }
+  .remember input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .box {
+    width: 22px; height: 22px; flex: 0 0 auto;
+    border-radius: 7px;
+    background: #fff;
+    border: 2px solid var(--border-default);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--yk-deepsea); font-size: 14px; font-weight: 900;
+    transition: all var(--dur-fast) var(--ease-out);
+  }
+  .remember input:checked + .box {
+    background: var(--yk-sunshine-400);
+    border-color: var(--yk-sunshine-400);
+    box-shadow: 0 3px 0 var(--yk-sunshine-600);
+  }
+  .remember input:focus-visible + .box { box-shadow: var(--focus-ring); }
+  .box .tick { opacity: 0; transform: scale(0.6); transition: all var(--dur-fast) var(--ease-bounce); }
+  .remember input:checked + .box .tick { opacity: 1; transform: scale(1); }
+  .forgot {
+    font-size: 14px; font-weight: 600;
+    color: var(--yk-teal-600); text-decoration: none;
+  }
+  .forgot:hover { text-decoration: underline; }
+
+  /* signin button (chunky game button) */
+  .signin {
+    width: 100%;
+    font-family: 'Omnes', sans-serif;
+    font-weight: 800; font-size: 18px;
+    color: var(--yk-deepsea);
+    background: var(--yk-sunshine-400);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 15px 24px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 5px 0 var(--yk-sunshine-600);
+    transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+  }
+  .signin:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--yk-sunshine-600); }
+
+  .alt {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14.5px;
+    color: var(--yk-ink-700);
+  }
+  .alt a { color: var(--yk-teal-600); font-weight: 800; text-decoration: none; }
+  .alt a:hover { text-decoration: underline; }
+
+  /* LEFT column: mascots big */
+  .mascots {
+    order: 1;
+    position: relative;
+    align-self: center;
+    justify-self: center;
+    height: clamp(320px, 44vh, 460px);
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .mascot-circle {
+    position: absolute;
+    bottom: 9%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(94%, 540px);
+    aspect-ratio: 1 / 1;
+    background: rgba(255,107,71,0.25);
+    border-radius: 50%;
+    z-index: 0;
+  }
+  .ground {
+    position: absolute;
+    bottom: 6%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 64%;
+    height: 34px;
+    background: radial-gradient(closest-side, rgba(10,37,64,0.22), rgba(10,37,64,0) 75%);
+    z-index: 0;
+  }
+  .mascots img {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 24px 28px rgba(10,37,64,0.18));
+  }
+  .mascots .boy  { margin-inline-end: -16%; transform-origin: bottom center; animation: leanBoy 4.2s var(--ease-in-out) infinite; }
+  .mascots .girl { height: 92%; margin-bottom: -1%; z-index: 2; transform-origin: bottom center; animation: leanGirl 4.2s var(--ease-in-out) infinite; }
+
+  .spark {
+    position: absolute;
+    top: -7%;
+    left: 50%;
+    z-index: 4;
+    transform: translateX(-50%);
+    background: #fff;
+    color: var(--yk-deepsea);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 9px 16px;
+    border-radius: 18px;
+    box-shadow: var(--shadow-md);
+    white-space: nowrap;
+    animation: spark-pop 4.2s var(--ease-bounce) infinite;
+  }
+  .spark::after {
+    content: '';
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-top-color: #fff;
+    border-bottom: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mascots .boy, .mascots .girl, .spark { animation: none; }
+  }
+  @keyframes leanGirl {
+    0%, 100% { transform: scaleX(-1) translateY(0) rotate(0deg); }
+    50%      { transform: scaleX(-1) translateY(-7px) rotate(3.5deg); }
+  }
+  @keyframes leanBoy {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-7px) rotate(-3.5deg); }
+  }
+  @keyframes spark-pop {
+    0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+    50%      { transform: translateX(-50%) translateY(-6px) scale(1.06); }
+  }
+
+  /* ---------- Footer contact band (game-style) ---------- */
+  .contact {
+    position: relative;
+    z-index: 3;
+    margin-top: 36px;
+  }
+  .wave { display: block; width: 100%; height: 64px; margin-bottom: -1px; }
+  .wave path { fill: var(--yk-deepsea); }
+
+  .contact-band {
+    position: relative;
+    background: var(--yk-deepsea);
+    padding: 8px 24px 46px;
+    overflow: hidden;
+  }
+  .gitem {
+    position: absolute;
+    font-size: 30px;
+    opacity: 0.92;
+    pointer-events: none;
+    animation: floatItem 5s var(--ease-in-out) infinite;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25));
+  }
+  @media (prefers-reduced-motion: reduce) { .gitem { animation: none; } }
+  @keyframes floatItem {
+    0%, 100% { transform: translateY(0) rotate(-6deg); }
+    50%      { transform: translateY(-12px) rotate(6deg); }
+  }
+
+  .contact-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+    color: #fff;
+  }
+  .contact-eyebrow {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--yk-sunshine-400);
+    margin-bottom: 8px;
+  }
+  .contact-title {
+    font-family: 'Omnes', sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 4vw, 38px);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    color: #fff;
+  }
+  .contact-sub {
+    font-size: 17px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.82);
+    margin: 0 0 22px;
+    text-wrap: pretty;
+  }
+  .contact-sub b { color: #fff; font-weight: 700; }
+  .contact-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .phone-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    direction: ltr;
+    text-decoration: none;
+    font-family: 'Omnes', sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+    color: var(--yk-deepsea);
+    background: var(--yk-sunshine-400);
+    padding: 13px 24px;
+    border-radius: var(--radius-pill);
+    box-shadow: 0 5px 0 var(--yk-sunshine-600);
+    transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+  }
+  .phone-pill:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--yk-sunshine-600); }
+  .phone-pill .ic { font-size: 20px; }
+  .social {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    color: #fff;
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 11px 20px;
+    border-radius: var(--radius-pill);
+    transition: background var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+  }
+  .social:hover { background: rgba(255,255,255,0.18); transform: translateY(-2px); }
+  .social .ico {
+    width: 24px; height: 24px;
+    flex: 0 0 auto;
+    background: #fff;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .social .ico svg { width: 16px; height: 16px; display: block; }
+  .social.fb .ico svg { fill: #1877F2; }
+  .social.tt .ico svg { fill: #0A2540; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 880px) {
+    .topbar-inner { padding: 10px 24px 8px; }
+    .top-link { font-size: 13px; }
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 8px 24px 16px;
+      gap: 8px;
+    }
+    .panel { order: 1; justify-self: center; }
+    .mascots { order: 2; height: clamp(280px, 40vh, 380px); }
+    .gitem { display: none; }
+    .phone-pill { font-size: 21px; }
+    .contact-sub { font-size: 15px; }
+  }
+  @media (max-width: 520px) {
+    .login-card { padding: 28px 22px 26px; border-radius: 24px; }
+    .login-card h1 { font-size: 31px; }
+    .row { flex-wrap: wrap; }
+    .phone-pill { font-size: 19px; padding: 12px 18px; }
+  }
+</style>
+</head>
+<body style="font-size: 14px">
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="_ds/design-system-663a1e7d-b049-4aa2-9b95-671ced3eba73/_ds_bundle.js"></script>
+
+  <script>
+    const e = React.createElement;
+    const { useState } = React;
+
+    const fbSvg = '<svg viewBox="0 0 24 24"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.49 0-1.95.93-1.95 1.88v2.26h3.32l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>';
+    const ttSvg = '<svg viewBox="0 0 24 24"><path d="M16.6 5.82a4.28 4.28 0 0 1-1.06-2.82h-3.2v12.94a2.34 2.34 0 1 1-2.34-2.34c.2 0 .39.03.58.08v-3.27a5.6 5.6 0 0 0-.58-.03 5.6 5.6 0 1 0 5.6 5.6V9.6a7.5 7.5 0 0 0 4.38 1.4V7.8a4.28 4.28 0 0 1-3.38-1.98z"/></svg>';
+
+    function SignIn() {
+      const [showPw, setShowPw] = useState(false);
+
+      return e('div', { className: 'page' },
+        // decorative confetti
+        e('span', { className: 'blob', style: { width: 16, height: 16, top: '24%', left: '10%', background: 'var(--yk-pink)' } }),
+        e('span', { className: 'blob', style: { width: 11, height: 11, top: '62%', left: '44%', background: 'var(--yk-teal)' } }),
+        e('span', { className: 'blob', style: { width: 14, height: 14, top: '16%', right: '38%', background: 'var(--yk-coral)' } }),
+        e('span', { className: 'blob', style: { width: 9, height: 9, top: '50%', left: '6%', background: 'var(--yk-sunshine-400)' } }),
+
+        // ---- Header band ----
+        e('header', { className: 'topbar' },
+          e('span', { className: 'gitem', style: { top: '24%', right: '16%', fontSize: '22px', animationDelay: '-0.6s' } }, '⚡'),
+          e('span', { className: 'gitem', style: { top: '30%', right: '7%', fontSize: '20px', animationDelay: '-1.7s' } }, '⭐'),
+          e('div', { className: 'topbar-inner' },
+            e('a', { className: 'logo', href: 'Yurka landing Page.html' },
+              e('img', { className: 'logo-mark', src: 'assets/yurka-mark-tight.svg', alt: '' }),
+              e('img', { className: 'logo-word', src: 'assets/yurka-wordmark.svg', alt: 'Yurka' })
+            ),
+            e('a', { className: 'top-link', href: 'Yurka Signup.html' }, 'ليس لديك حساب؟ ', e('b', null, 'أنشئ حسابك'))
+          ),
+          e('svg', { className: 'wave-bottom', viewBox: '0 0 1440 26', preserveAspectRatio: 'none' },
+            e('path', { d: 'M0,0 L1440,0 L1440,12 C1200,2 960,2 720,14 C480,26 240,26 0,14 Z' })
+          )
+        ),
+
+        // ---- Hero: form + mascots ----
+        e('main', { className: 'hero' },
+          // mascots (left)
+          e('div', { className: 'mascots' },
+            e('span', { className: 'mascot-circle' }),
+            e('span', { className: 'ground' }),
+            e('span', { className: 'spark' }, 'أهلاً بعودتك! 👋'),
+            e('img', { className: 'boy', src: 'assets/boy-mascot.png', alt: 'شخصية يوركا' }),
+            e('img', { className: 'girl', src: 'assets/girl-mascot.png', alt: 'شخصية يوركا' })
+          ),
+          // login form card (right in RTL)
+          e('div', { className: 'panel' },
+            e('form', { className: 'login-card', onSubmit: (ev) => ev.preventDefault() },
+              e('span', { className: 'eyebrow' }, '⚡ بوابة اللاعبين'),
+              e('h1', null, 'تسجيل الدخول'),
+              e('p', { className: 'sub' }, 'ادخل بياناتك وكمّل مغامرتك من حيث وقفت.'),
+
+              e('div', { className: 'field' },
+                e('label', { htmlFor: 'fullname' }, 'الاسم رباعي'),
+                e('div', { className: 'control' },
+                  e('span', { className: 'lead' }, '🧑‍🚀'),
+                  e('input', { id: 'fullname', name: 'fullname', type: 'text', autoComplete: 'name', placeholder: 'اكتب اسمك رباعي', required: true })
+                )
+              ),
+
+              e('div', { className: 'field' },
+                e('label', { htmlFor: 'password' }, 'الرقم السري'),
+                e('div', { className: 'control' },
+                  e('span', { className: 'lead' }, '🔒'),
+                  e('input', { id: 'password', name: 'password', type: showPw ? 'text' : 'password', autoComplete: 'current-password', placeholder: '••••••••', required: true }),
+                  e('button', { type: 'button', className: 'eye', 'aria-label': showPw ? 'إخفاء الرقم السري' : 'إظهار الرقم السري', onClick: () => setShowPw(v => !v) }, showPw ? '🙈' : '👁')
+                )
+              ),
+
+              e('div', { className: 'row' },
+                e('label', { className: 'remember' },
+                  e('input', { type: 'checkbox', id: 'remember', name: 'remember' }),
+                  e('span', { className: 'box' }, e('span', { className: 'tick' }, '✓')),
+                  'تذكرني'
+                ),
+                e('a', { className: 'forgot', href: '#' }, 'نسيت الرقم السري؟')
+              ),
+
+              e('button', { type: 'submit', className: 'signin' }, 'يلا نبدأ ', e('span', { 'aria-hidden': true }, '←')),
+
+              e('p', { className: 'alt' }, 'لسه جديد في يوركا؟ ', e('a', { href: 'Yurka Signup.html' }, 'سجّل دلوقتي'))
+            )
+          )
+        ),
+
+        // ---- Contact footer (game-style band) ----
+        e('footer', { className: 'contact' },
+          e('svg', { className: 'wave', viewBox: '0 0 1440 64', preserveAspectRatio: 'none' },
+            e('path', { d: 'M0,40 C240,4 480,4 720,28 C960,52 1200,52 1440,20 L1440,64 L0,64 Z' })
+          ),
+          e('div', { className: 'contact-band' },
+            e('span', { className: 'gitem', style: { top: '18%', left: '7%', animationDelay: '-0.5s' } }, '🔥'),
+            e('span', { className: 'gitem', style: { top: '54%', left: '15%', animationDelay: '-1.4s' } }, '⭐'),
+            e('span', { className: 'gitem', style: { top: '20%', right: '8%', animationDelay: '-2.1s' } }, '⚡'),
+            e('span', { className: 'gitem', style: { top: '56%', right: '15%', animationDelay: '-0.9s' } }, '🏅'),
+            e('div', { className: 'contact-inner' },
+              e('span', { className: 'contact-eyebrow' }, 'تواصل معنا'),
+              e('h3', { className: 'contact-title' }, 'محتاج مساعدة؟ 🚀'),
+              e('p', { className: 'contact-sub' },
+                'للاستفسارات والحجز في السنتر لطلبة الأوفلاين مع ',
+                e('b', null, 'مستر يوسف شهيد')
+              ),
+              e('div', { className: 'contact-actions' },
+                e('a', { className: 'phone-pill', href: 'tel:01008174224' },
+                  e('span', { className: 'ic' }, '📞'), '01008174224'
+                ),
+                e('a', { className: 'social fb', href: 'https://www.facebook.com/profile.php?id=61589861033857', target: '_blank', rel: 'noopener' },
+                  e('span', { className: 'ico', dangerouslySetInnerHTML: { __html: fbSvg } }), 'فيسبوك'
+                ),
+                e('a', { className: 'social tt', href: 'https://www.tiktok.com/@yousefshehed', target: '_blank', rel: 'noopener' },
+                  e('span', { className: 'ico', dangerouslySetInnerHTML: { __html: ttSvg } }), 'تيك توك'
+                )
+              )
+            )
+          )
+        )
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(e(SignIn));
+  </script>
+</body>
+</html>
+
+<style id="__om-edit-overrides">
+#root .mascots >.girl { padding: 0px 77px 0px 0px !important }
+#root .mascots >.girl { padding: 0px 88px 0px 0px !important }
+#root .mascots >.girl { padding: 0px 70px 0px 0px !important }
+#root .mascots >.girl { padding: 0px 65px 0px 0px !important }
+#root .mascots >.mascot-circle { padding: 8px 0px 0px !important }
+#root .mascots >.mascot-circle { padding: 8px 0px 5px !important }
+#root .mascots >.mascot-circle { letter-spacing: -0.7px !important }
+#root .mascots >.mascot-circle { border-width: 51px 0px 0px !important; border-style: solid !important }
+#root .mascots >.mascot-circle { border-width: 0px !important }
+#root .mascots >.mascot-circle { letter-spacing: 0.5px !important }
+#root .mascots >.mascot-circle { opacity: 1 !important }
+#root .mascots >.mascot-circle { line-height: 1.3 !important }
+#root .mascots >.mascot-circle { font-weight: 500 !important }
+#root .mascots >.mascot-circle { width: 455px !important }
+#root .mascots >.mascot-circle { width: 459px !important }
+</style>

@@ -1,0 +1,54 @@
+/* ============================================================
+   Yurka — Webfonts
+   Omnes Arabic: primary UI + body typeface (geometric humanist sans)
+   Chaloops: playful rounded display face used in the wordmark and
+   big gamified headlines. The Chaloops binary was NOT provided, so
+   we substitute Baloo 2 (Google Fonts) — the closest rounded match.
+   >>> Replace the Baloo 2 @import + display stack when the real
+       Chaloops files are supplied. <<<
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap');
+
+@font-face {
+  font-family: 'Omnes';
+  src: url('../assets/fonts/Omnes-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Omnes';
+  src: url('../assets/fonts/Omnes-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Omnes';
+  src: url('../assets/fonts/Omnes-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Omnes';
+  src: url('../assets/fonts/Omnes-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Omnes';
+  src: url('../assets/fonts/Omnes-Black.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Omnes Light';
+  src: url('../assets/fonts/Omnes-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}

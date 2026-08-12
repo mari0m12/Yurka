@@ -1,0 +1,95 @@
+@model List<EduPlatform.Models.Exam>
+@{
+    ViewData["Title"] = "إدارة الامتحانات";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int? unitId = Context.Request.Query.ContainsKey("unitId") && int.TryParse(Context.Request.Query["unitId"], out var parsedUnit) ? parsedUnit : null;
+    int? lessonId = Context.Request.Query.ContainsKey("lessonId") && int.TryParse(Context.Request.Query["lessonId"], out var parsedLesson) ? parsedLesson : null;
+}
+
+<div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <nav class="sidebar-nav" style="padding-top:24px;">
+            <a href="/Admin" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> الرئيسية</a>
+            <a href="/Admin/Subjects" class="sidebar-link"><i class="fas fa-book"></i> المواد</a>
+        </nav>
+    </aside>
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div class="dashboard-title">إدارة الامتحانات</div>
+            <a href="/Admin/CreateExam?unitId=@unitId&lessonId=@lessonId" class="btn btn-primary"><i class="fas fa-plus"></i> إضافة امتحان</a>
+        </div>
+
+        <div class="admin-table-card">
+            @if (!Model.Any())
+            {
+                <div class="empty-state">
+                    <i class="fas fa-clipboard"></i>
+                    <h3>لا توجد امتحانات بعد</h3>
+                    <a href="/Admin/CreateExam?unitId=@unitId&lessonId=@lessonId" class="btn btn-primary" style="margin-top:16px;">إضافة امتحان</a>
+                </div>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>الامتحان</th>
+                            <th>النوع</th>
+                            <th>المدة</th>
+                            <th>النجاح</th>
+                            <th>المحاولات</th>
+                            <th>الأسئلة</th>
+                            <th>الحالة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var e in Model)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@e.Title</strong>
+                                @if (e.Unit != null) { <div style="font-size:12px; color:var(--text-muted);">@e.Unit.Title</div> }
+                                @if (e.Lesson != null) { <div style="font-size:12px; color:var(--text-muted);">درس: @e.Lesson.Title</div> }
+                            </td>
+                            <td>
+                                @if (e.ExamType == EduPlatform.Models.ExamType.Unit)
+                                {
+                                    <span class="badge badge-primary">وحدة</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-info">درس</span>
+                                }
+                            </td>
+                            <td>@e.DurationMinutes د</td>
+                            <td><strong style="color:var(--success)">@e.PassingScore%</strong></td>
+                            <td>@e.MaxAttempts</td>
+                            <td><span class="badge badge-info">@e.Questions.Count سؤال</span></td>
+                            <td>
+                                @if (e.IsActive) { <span class="badge badge-success">نشط</span> }
+                                else { <span class="badge badge-danger">مخفي</span> }
+                            </td>
+                            <td>
+                                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                    <a href="/Admin/ManageQuestions/@e.Id" class="btn btn-primary btn-sm"><i class="fas fa-question-circle"></i> الأسئلة</a>
+                                    <a href="/Admin/EditExam/@e.Id" class="btn btn-outline btn-sm"><i class="fas fa-edit"></i> تعديل</a>
+                                    <form asp-controller="AdminExt" asp-action="ToggleExam" asp-route-id="@e.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline btn-sm"><i class="fas fa-power-off"></i> @(e.IsActive ? "إخفاء" : "تفعيل")</button>
+                                    </form>
+                                    <form asp-controller="Admin" asp-action="DeleteExam" method="post" class="d-inline" onsubmit="return confirm('حذف الامتحان سيحذف أسئلته ونتائجه. هل أنت متأكد؟');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@e.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> حذف</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </main>
+</div>

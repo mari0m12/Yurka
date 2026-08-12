@@ -1,0 +1,126 @@
+@model EduPlatform.ViewModels.ExamResultViewModel
+@{
+    ViewData["Title"] = "نتيجة الامتحان";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string resultClass = Model.Attempt.IsPassed ? "passed" : "failed";
+    string resultIcon = Model.Attempt.IsPassed ? "trophy" : "times-circle";
+    string resultMsg = Model.Attempt.IsPassed ? "مبروك! اجتزت الامتحان بنجاح 🎉" : "للأسف لم تجتز الامتحان هذه المرة";
+}
+
+<div class="exam-container">
+
+    <!-- Result Hero -->
+    <div class="result-hero @resultClass">
+        <div>
+            <i class="fas fa-@resultIcon" style="font-size:56px; opacity:0.9;"></i>
+        </div>
+        <div class="result-score">@Model.ScorePercentage<span style="font-size:36px">%</span></div>
+        <div class="result-label">@Model.Attempt.Score من @Model.Attempt.TotalPoints درجة</div>
+        <div class="result-status">@resultMsg</div>
+        <div style="margin-top:12px; font-size:14px; opacity:0.8;">
+            درجة النجاح: @Model.Exam.PassingScore%
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-grid" style="margin-bottom:28px;">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(16,185,129,0.1)">
+                <i class="fas fa-check" style="color:var(--success)"></i>
+            </div>
+            <div class="stat-info">
+                <h3 style="color:var(--success)">@Model.QuestionResults.Count(q => q.IsCorrect)</h3>
+                <p>إجابات صحيحة</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(239,68,68,0.1)">
+                <i class="fas fa-times" style="color:var(--danger)"></i>
+            </div>
+            <div class="stat-info">
+                <h3 style="color:var(--danger)">@Model.QuestionResults.Count(q => !q.IsCorrect)</h3>
+                <p>إجابات خاطئة</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(245,158,11,0.1)">
+                <i class="fas fa-clock" style="color:var(--accent)"></i>
+            </div>
+            <div class="stat-info">
+                <h3>@Model.Exam.DurationMinutes</h3>
+                <p>دقيقة للامتحان</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Review -->
+    <div style="background:white; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; margin-bottom:24px;">
+        <div style="padding:16px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;">
+            <i class="fas fa-list-check" style="color:var(--primary)"></i>
+            <h3 style="font-size:16px; font-weight:700; color:var(--dark);">مراجعة الإجابات</h3>
+        </div>
+        <div style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+            @foreach (var (result, index) in Model.QuestionResults.Select((r, i) => (r, i)))
+            {
+                <div style="border:2px solid @(result.IsCorrect ? "var(--success)" : "var(--danger)"); border-radius:var(--radius-sm); padding:18px; background:@(result.IsCorrect ? "#f0fdf4" : "#fff5f5")">
+                    <div style="display:flex; align-items:start; gap:10px; margin-bottom:14px;">
+                        <div style="width:28px; height:28px; border-radius:50%; background:@(result.IsCorrect ? "var(--success)" : "var(--danger)"); color:white; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">
+                            @(result.IsCorrect ? "✓" : "✗")
+                        </div>
+                        <div style="font-weight:600; font-size:15px; color:var(--dark);">
+                            @(index + 1). @result.Question.Text
+                        </div>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; gap:8px; padding-right:38px;">
+                        @foreach (var ans in result.Question.Answers)
+                        {
+                            bool isSelected = result.SelectedAnswer?.Id == ans.Id;
+                            bool isCorrect = ans.IsCorrect;
+                            string style = isCorrect
+                                ? "background:#d1fae5; border:1.5px solid var(--success); color:#065f46;"
+                                : isSelected && !isCorrect
+                                    ? "background:#fee2e2; border:1.5px solid var(--danger); color:#991b1b;"
+                                    : "background:white; border:1.5px solid var(--border);";
+
+                            <div style="padding:10px 14px; border-radius:8px; font-size:14px; display:flex; align-items:center; gap:8px; @style">
+                                @if (isCorrect)
+                                {
+                                    <i class="fas fa-check-circle" style="color:var(--success)"></i>
+                                }
+                                else if (isSelected)
+                                {
+                                    <i class="fas fa-times-circle" style="color:var(--danger)"></i>
+                                }
+                                else
+                                {
+                                    <i class="far fa-circle" style="color:#cbd5e1"></i>
+                                }
+                                @ans.Text
+                                @if (isSelected && !isCorrect)
+                                {
+                                    <span style="font-size:11px; margin-right:auto; margin-left:0;">(اخترت هذه)</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        @if (Model.Exam.UnitId.HasValue)
+        {
+            <a href="/Unit/Detail/@Model.Exam.UnitId" class="btn btn-primary btn-lg">
+                <i class="fas fa-arrow-right"></i>
+                العودة للوحدة
+            </a>
+        }
+        <a href="/Student/Dashboard" class="btn btn-outline btn-lg">
+            <i class="fas fa-tachometer-alt"></i>
+            لوحة التحكم
+        </a>
+    </div>
+</div>

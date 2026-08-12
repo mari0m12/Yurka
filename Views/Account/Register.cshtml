@@ -1,0 +1,340 @@
+@model EduPlatform.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "إنشاء حساب";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var avatars = Enumerable.Range(1, 12).Select(i => $"/yurka/assets/avatars/avatar-{i:00}.png").ToList();
+
+    // حدد الـ step اللي فيه أخطاء عشان نرجعه تلقائي
+    int errorStep = 1;
+    bool hasStep2Errors = !ViewData.ModelState.IsValid &&
+        (ViewData.ModelState.ContainsKey("Governorate") && ViewData.ModelState["Governorate"]!.Errors.Count > 0 ||
+         ViewData.ModelState.ContainsKey("Markaz") && ViewData.ModelState["Markaz"]!.Errors.Count > 0 ||
+         ViewData.ModelState.ContainsKey("GradeLevel") && ViewData.ModelState["GradeLevel"]!.Errors.Count > 0);
+    if (hasStep2Errors) errorStep = 2;
+}
+
+<div class="auth-page yk-register-page">
+    <div class="yk-register-wrap">
+
+        <!-- ===== STEP INDICATOR ===== -->
+        <div class="yk-steps">
+            <div class="yk-step active" data-step="1">
+                <div class="yk-step-bubble">
+                    <i class="fas fa-user"></i>
+                    <span class="yk-step-done-icon"><i class="fas fa-check"></i></span>
+                </div>
+                <span class="yk-step-label">بياناتك</span>
+            </div>
+            <div class="yk-step-line"></div>
+            <div class="yk-step" data-step="2">
+                <div class="yk-step-bubble">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span class="yk-step-done-icon"><i class="fas fa-check"></i></span>
+                </div>
+                <span class="yk-step-label">مكانك وصفك</span>
+            </div>
+            <div class="yk-step-line"></div>
+            <div class="yk-step" data-step="3">
+                <div class="yk-step-bubble">
+                    <i class="fas fa-gamepad"></i>
+                    <span class="yk-step-done-icon"><i class="fas fa-check"></i></span>
+                </div>
+                <span class="yk-step-label">شخصيتك</span>
+            </div>
+        </div>
+
+        <!-- ===== FORM CARD ===== -->
+        <div class="auth-card yk-register-card">
+
+            <form asp-controller="Account" asp-action="Register" method="post" id="registerForm">
+                @Html.AntiForgeryToken()
+
+                @* الإيميل بيتولد تلقائي من رقم التليفون *@
+                <input type="hidden" asp-for="Email" id="emailHidden" />
+                <input type="hidden" asp-for="ProfileImage" id="profileImageInput" value="/yurka/assets/avatars/avatar-01.png" />
+
+                <!-- ===========================
+                     STEP 1 — بيانات الطالب
+                ============================ -->
+                <div class="yk-step-panel" data-panel="1">
+                    <div class="yk-panel-head">
+                        <span class="section-tag">الخطوة 1 من 3</span>
+                        <h2 class="auth-title">بياناتك الشخصية</h2>
+                        <p class="yk-panel-desc">ادخل بياناتك الأساسية عشان نعرفك.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">الاسم الرباعي <span>*</span></label>
+                        <input asp-for="FullName" class="form-control" placeholder="الاسم الأول واسم الأب والجد والعائلة" />
+                        <span asp-validation-for="FullName" class="field-validation-error yk-field-err" data-step="1"></span>
+                    </div>
+
+                    <div class="yk-field-row">
+                        <div class="form-group">
+                            <label class="form-label">رقم هاتفك <span>*</span></label>
+                            <input asp-for="Phone" type="tel" class="form-control" placeholder="01XXXXXXXXX" id="phoneInput" />
+                            <span asp-validation-for="Phone" class="field-validation-error yk-field-err" data-step="1"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">رقم ولي الأمر <span>*</span></label>
+                            <input asp-for="ParentPhone" type="tel" class="form-control" placeholder="01XXXXXXXXX" />
+                            <span asp-validation-for="ParentPhone" class="field-validation-error yk-field-err" data-step="1"></span>
+                        </div>
+                    </div>
+
+                    <div class="yk-field-row">
+                        <div class="form-group">
+                            <label class="form-label">كلمة المرور <span>*</span></label>
+                            <div class="yk-pass-wrap">
+                                <input asp-for="Password" type="password" class="form-control" id="passInput" />
+                                <button type="button" class="yk-pass-toggle" onclick="togglePass('passInput',this)" tabindex="-1">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="field-validation-error yk-field-err" data-step="1"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">تأكيد كلمة المرور <span>*</span></label>
+                            <div class="yk-pass-wrap">
+                                <input asp-for="ConfirmPassword" type="password" class="form-control" id="confirmInput" />
+                                <button type="button" class="yk-pass-toggle" onclick="togglePass('confirmInput',this)" tabindex="-1">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="field-validation-error yk-field-err" data-step="1"></span>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-full btn-lg yk-next-btn" onclick="goStep(2)">
+                        التالي <i class="fas fa-arrow-left"></i>
+                    </button>
+
+                    <div class="yk-auth-link">
+                        لديك حساب بالفعل؟ <a href="/Account/Login">تسجيل الدخول</a>
+                    </div>
+                </div>
+
+                <!-- ===========================
+                     STEP 2 — المحافظة والصف
+                ============================ -->
+                <div class="yk-step-panel" data-panel="2">
+                    <div class="yk-panel-head">
+                        <span class="section-tag">الخطوة 2 من 3</span>
+                        <h2 class="auth-title">مكانك وصفك الدراسي</h2>
+                        <p class="yk-panel-desc">محتاجين نعرف أنت فين وبتدرس إيه.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">المحافظة <span>*</span></label>
+                        <select asp-for="Governorate" class="form-control form-select" id="governorateSelect" onchange="fillMarkazOptions()">
+                            <option value="">اختار محافظتك</option>
+                        </select>
+                        <span asp-validation-for="Governorate" class="field-validation-error yk-field-err" data-step="2"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">المركز / القسم <span>*</span></label>
+                        <select asp-for="Markaz" class="form-control form-select" id="markazSelect" disabled>
+                            <option value="">اختار المحافظة الأول</option>
+                        </select>
+                        <span asp-validation-for="Markaz" class="field-validation-error yk-field-err" data-step="2"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">الصف الدراسي <span>*</span></label>
+                        <select asp-for="GradeLevel" class="form-control form-select">
+                            <option value="">اختار صفك</option>
+                            <option value="7">الصف الأول الإعدادي</option>
+                            <option value="8">الصف الثاني الإعدادي</option>
+                            <option value="9">الصف الثالث الإعدادي</option>
+                        </select>
+                        <span asp-validation-for="GradeLevel" class="field-validation-error yk-field-err" data-step="2"></span>
+                    </div>
+
+                    <div class="yk-step-actions">
+                        <button type="button" class="btn btn-outline yk-back-btn" onclick="goStep(1)">
+                            <i class="fas fa-arrow-right"></i> السابق
+                        </button>
+                        <button type="button" class="btn btn-primary yk-next-btn" onclick="goStep(3)">
+                            التالي <i class="fas fa-arrow-left"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===========================
+                     STEP 3 — اختيار الأفاتار
+                ============================ -->
+                <div class="yk-step-panel" data-panel="3">
+                    <div class="yk-panel-head">
+                        <span class="section-tag">الخطوة 3 من 3</span>
+                        <h2 class="auth-title">اختار شخصيتك</h2>
+                        <p class="yk-panel-desc">الصورة دي هتظهر في بروفايلك ونقاطك.</p>
+                    </div>
+
+                    <div class="yk-avatar-grid yk-register-avatars">
+                        @foreach (var avatar in avatars)
+                        {
+                            <button type="button" class="yk-avatar-choice register-avatar" data-avatar="@avatar">
+                                <img src="@avatar" alt="" />
+                                <div class="yk-avatar-check"><i class="fas fa-check"></i></div>
+                            </button>
+                        }
+                    </div>
+
+                    @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+                    {
+                        <div class="yk-error-box">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <div>@Html.ValidationSummary(true)</div>
+                        </div>
+                    }
+
+                    <div class="yk-step-actions">
+                        <button type="button" class="btn btn-outline yk-back-btn" onclick="goStep(2)">
+                            <i class="fas fa-arrow-right"></i> السابق
+                        </button>
+                        <button type="submit" class="btn btn-primary yk-next-btn" id="submitBtn">
+                            <i class="fas fa-rocket"></i> إنشاء الحساب
+                        </button>
+                    </div>
+
+                    <div class="yk-auth-link">
+                        لديك حساب بالفعل؟ <a href="/Account/Login">تسجيل الدخول</a>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // ===== EGYPTIAN GOVERNORATES & DISTRICTS =====
+        const govData = {
+          "القاهرة": ["عابدين","الأزبكية","الأزهر","باب الشعرية","البساتين","بولاق","الجمالية","الخليفة","الدرب الأحمر","الزاوية الحمراء","الزيتون","السيدة زينب","شبرا","المرج","مصر الجديدة","مصر القديمة","المطرية","منشأة ناصر","الموسكي","الوايلي","حلوان","عين شمس","النزهة","المقطم","التبين","دار السلام","المعادي","طره","الأميرية","المنيل","روض الفرج","شبرا الخيمة","القاهرة الجديدة","15 مايو"],
+          "الإسكندرية": ["أبو قير","برج العرب","برج العرب الجديدة","المنتزه","الرمل","سيدي جابر","اللبان","الجمرك","العامرية","كرموز","الدخيلة","غرب","وسط","أبيس","الدكهيلة"],
+          "الجيزة": ["أبو النمرس","أطفيح","البدرشين","إمبابة","أوسيم","الحوامدية","الصف","العياط","كرداسة","الواحات البحرية","منشأة القناطر","الشيخ زايد","6 أكتوبر","الأهرام","الدقي","العجوزة","المهندسين","بولاق الدكرور"],
+          "القليوبية": ["بنها","قليوب","شبرا الخيمة","شبين القناطر","طوخ","قها","كفر شكر","الخانكة","الخصوص","القناطر الخيرية","العبور","مسطرد"],
+          "الشرقية": ["الزقازيق","أبو حماد","أبو كبير","الإبراهيمية","بلبيس","ديرب نجم","فاقوس","هيهيا","الحسينية","كفر صقر","منيا القمح","الصالحية الجديدة","القنايات"],
+          "الدقهلية": ["المنصورة","بلقاس","دكرنس","جمصة","الجمالية","ميت غمر","المطرية","منية النصر","نبروه","السنبلاوين","طلخا","شربين","المنزلة","ميت سلسيل","أجا","تمي الأمديد"],
+          "الغربية": ["طنطا","بسيون","الزرقا","زفتى","كفر الزيات","المحلة الكبرى","قطور","سمنود"],
+          "المنوفية": ["شبين الكوم","أشمون","بركة السبع","الباجور","منوف","الشهداء","تلا","قويسنا"],
+          "البحيرة": ["دمنهور","أبو المطامير","أبو حمص","الدلنجات","إدكو","إيتاي البارود","كفر الدوار","كوم حمادة","المحمودية","النوبارية","حوش عيسى","رشيد","شبراخيت","وادي النطرون"],
+          "الفيوم": ["الفيوم","إبشواي","أطسا","سنورس","طامية","يوسف الصديق"],
+          "بني سويف": ["بني سويف","إهناسيا","ببا","الفشن","الواسطى","ناصر","سمسطا"],
+          "المنيا": ["المنيا","أبو قرقاص","بني مزار","دير مواس","العدوة","مطاي","مغاغة","ملوي","سمالوط"],
+          "أسيوط": ["أسيوط","أبنوب","أبو تيج","البداري","ديروط","الفتح","القوصية","ساحل سليم"],
+          "سوهاج": ["سوهاج","أخميم","البلينا","دار السلام","جرجا","جهينة","المراغة","المنشاة","ساقلتة","طهطا"],
+          "قنا": ["قنا","أبوتشت","دشنا","فرشوط","الوقف","قوص","نجع حمادي","نقادة"],
+          "الأقصر": ["الأقصر","إسنا","الأرمنت","القرنة","الطود"],
+          "أسوان": ["أسوان","أبو سمبل السياحية","إدفو","كوم أمبو","نصر النوبة","الدر","درو"],
+          "البحر الأحمر": ["الغردقة","رأس غارب","سفاجا","القصير","مرسى علم","الشلاتين"],
+          "الوادي الجديد": ["الخارجة","الداخلة","الفرافرة","باريس"],
+          "مطروح": ["مرسى مطروح","الحمام","الضبعة","العلمين","سيوة","سيدي براني","النجيلة"],
+          "شمال سيناء": ["العريش","بئر العبد","الحسنة","رفح","الشيخ زويد","نخل"],
+          "جنوب سيناء": ["الطور","أبو رديس","دهب","نويبع","رأس سدر","سانت كاترين","شرم الشيخ"],
+          "الإسماعيلية": ["الإسماعيلية","أبو صوير","الديوانة","فايد","القصاصين","كفر المساجد"],
+          "السويس": ["السويس","عتاقة","الجناين","فيصل"],
+          "بورسعيد": ["بورسعيد","الجميلة","بور فؤاد","الزهور","الشرق","العرب","المناخ","الضواحي"],
+          "دمياط": ["دمياط","عزبة البرج","فارسكور","الرملة","كفر سعد","الزرقا"],
+          "كفر الشيخ": ["كفر الشيخ","بيلا","برج البرلس","دسوق","فوه","الحامول","مطوبس","قلين","سيدي سالم"],
+        };
+
+        // ===== GENERATE EMAIL FROM PHONE =====
+        // الإيميل بيتولد تلقائي من رقم التليفون عشان Identity بيطلبه
+        function syncEmail() {
+            const phone = document.getElementById('phoneInput').value.trim().replace(/\D/g, '');
+            document.getElementById('emailHidden').value = phone ? phone + '@@yurka.edu' : '';
+        }
+        document.getElementById('phoneInput').addEventListener('input', syncEmail);
+        // شغّل مرة عند التحميل عشان لو كان فيه قيمة موجودة
+        syncEmail();
+
+        // ===== POPULATE GOVERNORATES =====
+        const govSelect = document.getElementById('governorateSelect');
+        const mrkSelect = document.getElementById('markazSelect');
+
+        Object.keys(govData).forEach(gov => {
+            const opt = document.createElement('option');
+            opt.value = gov;
+            opt.textContent = gov;
+            govSelect.appendChild(opt);
+        });
+
+        // استعادة القيمة لو الـ server رجع بأخطاء
+        const serverGov = '@(Model?.Governorate ?? string.Empty)';
+        const serverMrk = '@(Model?.Markaz ?? string.Empty)';
+        if (serverGov) {
+            govSelect.value = serverGov;
+            fillMarkazOptions();
+            if (serverMrk) mrkSelect.value = serverMrk;
+        }
+
+        function fillMarkazOptions() {
+            const gov = govSelect.value;
+            mrkSelect.innerHTML = '';
+            if (!gov) {
+                const def = document.createElement('option');
+                def.value = '';
+                def.textContent = 'اختار المحافظة الأول';
+                mrkSelect.appendChild(def);
+                mrkSelect.disabled = true;
+                return;
+            }
+            const def = document.createElement('option');
+            def.value = '';
+            def.textContent = 'اختار المركز / القسم';
+            mrkSelect.appendChild(def);
+            (govData[gov] || []).forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = m;
+                mrkSelect.appendChild(opt);
+            });
+            mrkSelect.disabled = false;
+        }
+
+        // ===== STEP NAVIGATION =====
+        function goStep(n) {
+            document.querySelectorAll('.yk-step-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.yk-step').forEach(s => {
+                const sn = parseInt(s.dataset.step);
+                s.classList.remove('active', 'done');
+                if (sn < n)  s.classList.add('done');
+                if (sn === n) s.classList.add('active');
+            });
+            document.querySelector(`.yk-step-panel[data-panel="${n}"]`).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ===== PASSWORD TOGGLE =====
+        function togglePass(id, btn) {
+            const inp = document.getElementById(id);
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                btn.querySelector('i').className = 'fas fa-eye-slash';
+            } else {
+                inp.type = 'password';
+                btn.querySelector('i').className = 'fas fa-eye';
+            }
+        }
+
+        // ===== AVATAR SELECTION =====
+        const avatarBtns = document.querySelectorAll('.register-avatar');
+        avatarBtns[0]?.classList.add('selected');
+        avatarBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                avatarBtns.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                document.getElementById('profileImageInput').value = btn.dataset.avatar;
+            });
+        });
+
+        // ===== AUTO-NAVIGATE TO ERROR STEP ON SERVER RETURN =====
+        // لو الـ server رجع بأخطاء، روح للـ step الصح
+        const initStep = @errorStep;
+        goStep(initStep);
+    </script>
+}

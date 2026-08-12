@@ -1,0 +1,396 @@
+/* =============================================
+   YURKA — REGISTER & LOGIN EXTRA STYLES
+   Multi-step wizard + mobile-first responsive
+============================================= */
+
+/* ===== SHARED AUTH PAGE ===== */
+.yk-register-page,
+.yk-login-page {
+    min-height: 100vh;
+    padding: 90px 16px 40px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+/* ===== REGISTER WRAPPER ===== */
+.yk-register-wrap {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.yk-register-card {
+    padding: 32px 36px;
+}
+
+/* ===== STEP INDICATOR ===== */
+.yk-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 0 8px;
+}
+
+.yk-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    cursor: default;
+}
+
+.yk-step-bubble {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    border: 2px solid rgba(255,255,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.5);
+    font-size: 16px;
+    transition: all 0.35s cubic-bezier(.4,0,.2,1);
+    position: relative;
+}
+
+.yk-step-done-icon {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--success);
+    color: #fff;
+    font-size: 14px;
+}
+
+.yk-step.done .yk-step-done-icon {
+    display: flex;
+}
+
+.yk-step.done .yk-step-bubble i:first-child {
+    display: none;
+}
+
+.yk-step.active .yk-step-bubble {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--dark);
+    box-shadow: 0 6px 0 #c99e00, 0 0 20px rgba(255,214,10,0.35);
+    transform: scale(1.1);
+}
+
+.yk-step.done .yk-step-bubble {
+    border-color: var(--success);
+    background: var(--success);
+}
+
+.yk-step-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.55);
+    transition: color 0.3s;
+    white-space: nowrap;
+}
+
+.yk-step.active .yk-step-label {
+    color: var(--primary);
+}
+
+.yk-step.done .yk-step-label {
+    color: #4ade80;
+}
+
+.yk-step-line {
+    flex: 1;
+    height: 2px;
+    background: rgba(255,255,255,0.18);
+    margin: 0 4px;
+    margin-bottom: 24px;
+    border-radius: 2px;
+    transition: background 0.4s;
+    min-width: 24px;
+}
+
+/* ===== STEP PANELS ===== */
+.yk-step-panel {
+    display: none;
+}
+
+.yk-step-panel.active {
+    display: block;
+    animation: ykPanelIn 0.3s ease;
+}
+
+@keyframes ykPanelIn {
+    from { opacity: 0; transform: translateX(-12px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ===== PANEL HEADER ===== */
+.yk-panel-head {
+    margin-bottom: 24px;
+}
+
+.yk-panel-desc {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 0;
+}
+
+/* ===== FIELD ROW ===== */
+.yk-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* ===== PASSWORD TOGGLE ===== */
+.yk-pass-wrap {
+    position: relative;
+}
+
+.yk-pass-wrap .form-control {
+    padding-left: 44px;
+}
+
+.yk-pass-toggle {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 15px;
+    padding: 4px;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.yk-pass-toggle:hover {
+    color: var(--primary);
+}
+
+/* ===== STEP ACTIONS ===== */
+.yk-step-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.yk-step-actions .yk-back-btn {
+    flex: 0 0 auto;
+    min-width: 110px;
+}
+
+.yk-step-actions .yk-next-btn {
+    flex: 1;
+}
+
+.yk-next-btn {
+    width: 100%;
+}
+
+/* ===== AUTH LINK ===== */
+.yk-auth-link {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.yk-auth-link a {
+    color: var(--accent);
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.yk-auth-link a:hover {
+    text-decoration: underline;
+}
+
+/* ===== ERROR BOX ===== */
+.yk-error-box {
+    background: #ffe0ef;
+    border: 1px solid #ff8cc1;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #8c0049;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+/* ===== AVATAR GRID ===== */
+.yk-register-avatars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.yk-register-avatars .yk-avatar-choice {
+    position: relative;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    background: #fff;
+    padding: 10px;
+    cursor: pointer;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+}
+
+.yk-register-avatars .yk-avatar-choice img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+}
+
+.yk-avatar-check {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 22px;
+    height: 22px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--dark);
+    font-weight: 700;
+    box-shadow: 0 2px 0 #c99e00;
+}
+
+.yk-register-avatars .yk-avatar-choice.selected {
+    border-color: var(--primary);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(255,214,10,0.3);
+}
+
+.yk-register-avatars .yk-avatar-choice.selected .yk-avatar-check {
+    display: flex;
+}
+
+.yk-register-avatars .yk-avatar-choice:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+/* ===== LOGIN LAYOUT ===== */
+.yk-login-wrap {
+    width: 100%;
+    max-width: 980px;
+}
+
+.yk-login-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: center;
+}
+
+.yk-login-card {
+    padding: 36px 40px;
+}
+
+.yk-login-brand {
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.yk-login-brand .auth-logo-icon {
+    margin: 0 auto 10px;
+}
+
+.yk-login-brand h1 {
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--dark);
+}
+
+.yk-login-brand p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 2px;
+}
+
+.yk-login-mascot-side {
+    position: relative;
+    min-height: 480px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: var(--radius);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+    .yk-register-card {
+        padding: 22px 18px;
+    }
+
+    .yk-field-row {
+        grid-template-columns: 1fr;
+    }
+
+    .yk-register-avatars {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .yk-step-bubble {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .yk-step-label {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 860px) {
+    .yk-login-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .yk-login-mascot-side {
+        display: none;
+    }
+
+    .yk-login-card {
+        padding: 28px 22px;
+    }
+
+    .yk-login-wrap {
+        max-width: 480px;
+    }
+}
+
+@media (max-width: 400px) {
+    .yk-register-avatars {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .yk-steps {
+        padding: 0;
+    }
+}
+

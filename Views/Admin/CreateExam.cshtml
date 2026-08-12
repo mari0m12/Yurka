@@ -1,0 +1,80 @@
+@model EduPlatform.ViewModels.ExamFormViewModel
+@{
+    bool isEdit = Model.Id != 0;
+    ViewData["Title"] = isEdit ? "تعديل امتحان" : "إضافة امتحان";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string action = isEdit ? "EditExam" : "CreateExam";
+}
+
+<div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <nav class="sidebar-nav" style="padding-top:24px;">
+            <a href="/Admin" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> الرئيسية</a>
+            <a href="/Admin/Subjects" class="sidebar-link"><i class="fas fa-book"></i> المواد</a>
+        </nav>
+    </aside>
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div class="dashboard-title">@ViewData["Title"]</div>
+        </div>
+        <div style="max-width:680px;">
+            <div class="form-card">
+                <form asp-controller="Admin" asp-action="@action" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="UnitId" />
+                    <input type="hidden" asp-for="LessonId" />
+
+                    <div class="form-group">
+                        <label class="form-label">عنوان الامتحان <span>*</span></label>
+                        <input asp-for="Title" class="form-control" required />
+                        <span asp-validation-for="Title" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">نوع الامتحان</label>
+                        <select asp-for="ExamType" class="form-control form-select">
+                            <option value="Unit">امتحان وحدة</option>
+                            <option value="Lesson">امتحان درس</option>
+                        </select>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+                        <div class="form-group">
+                            <label class="form-label">المدة (دقائق)</label>
+                            <input asp-for="DurationMinutes" type="number" class="form-control" min="5" max="180" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">درجة النجاح (%)</label>
+                            <input asp-for="PassingScore" type="number" class="form-control" min="10" max="100" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">المحاولات</label>
+                            <input asp-for="MaxAttempts" type="number" class="form-control" min="1" max="10" />
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:24px; margin-bottom:20px; flex-wrap:wrap;">
+                        <label class="form-check">
+                            <input asp-for="ShuffleQuestions" type="checkbox" />
+                            <span>خلط الأسئلة عشوائيًا</span>
+                        </label>
+                        <label class="form-check">
+                            <input asp-for="IsActive" type="checkbox" />
+                            <span>امتحان نشط</span>
+                        </label>
+                    </div>
+
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ</button>
+                        @if (isEdit)
+                        {
+                            <a href="/Admin/ManageQuestions/@Model.Id" class="btn btn-outline"><i class="fas fa-question-circle"></i> إدارة الأسئلة</a>
+                        }
+                        <a href="javascript:history.back()" class="btn btn-outline">إلغاء</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>

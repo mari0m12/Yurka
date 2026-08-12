@@ -1,0 +1,96 @@
+@model EduPlatform.ViewModels.PaymentRequestViewModel
+@{
+    ViewData["Title"] = "تأكيد الاشتراك";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="payment-container">
+    <div class="breadcrumb" style="margin-top:20px">
+        <a href="/">الرئيسية</a>
+        <i class="fas fa-chevron-left"></i>
+        @if (Model.Unit != null)
+        {
+            <a href="/Subject/Detail/@Model.Unit.SubjectId">@Model.Unit.Subject?.Name</a>
+            <i class="fas fa-chevron-left"></i>
+        }
+        <span>تأكيد الاشتراك</span>
+    </div>
+
+    <div class="payment-card">
+        <div class="payment-header">
+            <h2><i class="fas fa-bolt"></i> اشتراك Yurka</h2>
+            <p>@Model.Unit?.Title</p>
+        </div>
+        <div class="payment-body">
+            <div class="vodafone-info">
+                <div class="vf-icon"><i class="fas fa-mobile-screen-button"></i></div>
+                <div>
+                    <h4>ادفع عبر انستا باي</h4>
+                    <div class="vf-num">01008174224</div>
+                    <div style="font-size:12px; opacity:0.86; margin-top:4px;">
+                        ابعت المبلغ لنفس الرقم، وبعدها ارفع بيانات التحويل عشان يتم تفعيل الوحدة.
+                    </div>
+                </div>
+            </div>
+
+            <div class="price-display">
+                <div class="price-big">@Model.Unit?.Price.ToString("N0")</div>
+                <div class="price-label">جنيه مصري</div>
+            </div>
+
+            <div style="background:#f8fafc; border-radius:var(--radius-sm); padding:16px 20px; margin-bottom:28px; font-size:14px; color:var(--text-muted);">
+                <div style="font-weight:800; color:var(--dark); margin-bottom:8px;">خطوات الدفع:</div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <div>1. افتح تطبيق انستا باي على هاتفك.</div>
+                    <div>2. اختر تحويل وأدخل الرقم: <strong>01008174224</strong>.</div>
+                    <div>3. أدخل المبلغ: <strong>@Model.Unit?.Price.ToString("N0") جنيه</strong>.</div>
+                    <div>4. احتفظ برقم مرجع التحويل أو صورة الإيصال.</div>
+                    <div>5. أرسل الطلب من النموذج التالي وسيتم تفعيله بعد المراجعة.</div>
+                </div>
+            </div>
+
+            <form asp-controller="Unit" asp-action="Purchase" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="UnitId" value="@Model.UnitId" />
+
+                <div class="form-group">
+                    <label class="form-label">رقم الهاتف المحول منه <span>*</span></label>
+                    <input type="tel" name="VodafonePhone" class="form-control" placeholder="مثال: 01XXXXXXXXX"
+                           asp-for="VodafonePhone" required maxlength="11" />
+                    <span asp-validation-for="VodafonePhone" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">رقم مرجع التحويل <span>*</span></label>
+                    <input type="text" name="TransactionReference" class="form-control"
+                           placeholder="الرقم الموجود في رسالة التأكيد"
+                           asp-for="TransactionReference" required />
+                    <div class="form-hint">ستجد هذا الرقم في رسالة SMS أو تفاصيل العملية.</div>
+                    <span asp-validation-for="TransactionReference" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">صورة إيصال الدفع (اختياري)</label>
+                    <div style="border:2px dashed var(--border); border-radius:var(--radius-sm); padding:24px; text-align:center; cursor:pointer;"
+                         onclick="document.getElementById('receiptInput').click()">
+                        <i class="fas fa-cloud-upload-alt" style="font-size:28px; color:var(--text-muted); margin-bottom:8px; display:block;"></i>
+                        <div style="font-size:14px; color:var(--text-muted);">اضغط لرفع صورة الإيصال</div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">PNG, JPG حتى 5MB</div>
+                    </div>
+                    <input type="file" id="receiptInput" name="ReceiptImage" accept="image/*" style="display:none" />
+                    <img id="receiptPreview" style="display:none; width:100%; border-radius:var(--radius-sm); margin-top:12px; max-height:200px; object-fit:contain; border:1px solid var(--border);" />
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:8px;">
+                    <i class="fas fa-paper-plane"></i>
+                    إرسال طلب الدفع
+                </button>
+
+                <div style="text-align:center; margin-top:12px; font-size:13px; color:var(--text-muted);">
+                    <i class="fas fa-info-circle"></i>
+                    سيتم مراجعة الطلب وتفعيل الوحدة خلال فترة قصيرة.
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,59 @@
+@model List<EduPlatform.Models.Notification>
+@{
+    ViewData["Title"] = "الإشعارات";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <nav class="sidebar-nav" style="padding-top:24px;">
+            <a href="/Student/Dashboard" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</a>
+            <a href="/Student/Notifications" class="sidebar-link active"><i class="fas fa-bell"></i> الإشعارات</a>
+        </nav>
+    </aside>
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div class="dashboard-title">الإشعارات</div>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state" style="background:white; border-radius:var(--radius); border:1px solid var(--border); padding:64px;">
+                <i class="fas fa-bell-slash"></i>
+                <h3>لا توجد إشعارات</h3>
+                <p>ستظهر هنا الإشعارات المتعلقة باشتراكاتك وأنشطتك</p>
+            </div>
+        }
+        else
+        {
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                @foreach (var n in Model)
+                {
+                    <div style="background:white; border-radius:var(--radius-sm); border:1px solid var(--border);
+                         padding:16px 20px; display:flex; gap:14px; align-items:start;
+                         border-right:4px solid @(n.IsRead ? "var(--border)" : "var(--primary)");">
+                        <div style="width:40px; height:40px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+                             background:@(n.IsRead ? "#f1f5f9" : "rgba(26,60,107,0.1)");">
+                            <i class="fas fa-bell" style="color:@(n.IsRead ? "var(--text-muted)" : "var(--primary)");"></i>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="font-weight:@(n.IsRead ? "500" : "700"); color:var(--dark); font-size:15px; margin-bottom:4px;">
+                                @n.Title
+                            </div>
+                            <div style="font-size:13px; color:var(--text-muted); margin-bottom:6px;">@n.Message</div>
+                            <div style="font-size:12px; color:var(--text-muted);">
+                                <i class="fas fa-clock"></i> @n.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(n.Link))
+                        {
+                            <a href="@n.Link" class="btn btn-sm btn-outline" style="flex-shrink:0;">
+                                عرض <i class="fas fa-arrow-left"></i>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </main>
+</div>
